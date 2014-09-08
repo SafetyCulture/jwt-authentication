@@ -4,7 +4,7 @@
   "description": "Library that is used to create and verify json web tokens for service to service authentication purposes.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt"
   },
   "repository": {
     "type": "git",
