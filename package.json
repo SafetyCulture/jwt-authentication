@@ -17,9 +17,12 @@
     "grunt-jasmine-node": "^0.2.1",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-connect": "^0.8.0",
-    "grunt-contrib-watch": "^0.6.1"
+    "grunt-contrib-watch": "^0.6.1",
+    "jwt-simple": "^0.2.0",
+    "proxyquire": "^1.0.1"
   },
   "dependencies": {
-    "jsonwebtoken": "^1.1.1"
+    "jsonwebtoken": "^1.1.1",
+    "request": "^2.42.0"
   }
 }
