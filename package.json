@@ -1,0 +1,25 @@
+{
+  "name": "jwt-microservice-helper",
+  "version": "0.0.0",
+  "description": "Library that is used to create and verify json web tokens for service to service authentication purposes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:atlassianlabs/jwt-microservice-helper.git"
+  },
+  "author": "asrinivasan, bsayers",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-jasmine-node": "^0.2.1",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-connect": "^0.8.0",
+    "grunt-contrib-watch": "^0.6.1"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^1.1.1"
+  }
+}
