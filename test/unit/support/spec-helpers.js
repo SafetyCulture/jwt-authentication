@@ -1,5 +1,5 @@
 var path = require('path');
-var proxyquire = require('proxyquire').noCallThru();
+var proxyquire = require('proxyquire').noCallThru().noPreserveCache();
 
 module.exports = {
     failTest: function (doneCallback) {

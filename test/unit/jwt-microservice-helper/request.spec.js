@@ -1,4 +1,3 @@
-var q = require('q');
 var specHelpers = require('../support/spec-helpers');
 
 var failTest = specHelpers.failTest;

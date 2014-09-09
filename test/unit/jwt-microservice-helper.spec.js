@@ -69,19 +69,19 @@ describe('jwt-microservice-helper', function () {
         });
     });
 
-    xit('should return an error if it cannot retrieve the public key', function (done) {
-    });
-
-    xit('should throw an error if the token cannot be decoded', function () {
-
-    });
-
-
-    xit('should throw an error if the token verification fails', function () {
-
-    });
-
-    xit('should throw an error if the token has expired', function () {
-
-    });
+//    xit('should return an error if it cannot retrieve the public key', function (done) {
+//    });
+//
+//    xit('should throw an error if the token cannot be decoded', function () {
+//
+//    });
+//
+//
+//    xit('should throw an error if the token verification fails', function () {
+//
+//    });
+//
+//    xit('should throw an error if the token has expired', function () {
+//
+//    });
 });
