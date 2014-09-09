@@ -1,6 +1,5 @@
 var q = require('q');
 var specHelpers = require('./support/spec-helpers');
-var _ = require('lodash');
 
 describe('jwt-microservice-helper', function () {
     var jsonWebToken;
@@ -10,7 +9,7 @@ describe('jwt-microservice-helper', function () {
 
     beforeEach(function () {
         jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['decode', 'verify']);
-        jsonWebToken.decode.andReturn({iss: ''});
+        jsonWebToken.decode.andReturn({iss: 'default-issuer'});
         jsonWebToken.verify.andReturn(q());
 
         request = jasmine.createSpy('request');
@@ -26,17 +25,20 @@ describe('jwt-microservice-helper', function () {
         });
     });
 
-    it('should pass the given token to decode', function () {
-        validator.validate('json-web-token', _.noop);
-
-        expect(jsonWebToken.decode).toHaveBeenCalledWith('json-web-token');
+    it('should pass the given token to decode', function (done) {
+        validator.validate('json-web-token', function () {
+            expect(jsonWebToken.decode).toHaveBeenCalledWith('json-web-token');
+            done();
+        });
     });
 
-    it('should fetch the public key for the token', function () {
+    it('should fetch the public key for the token', function (done) {
         jsonWebToken.decode.andReturn({iss: 'an-issuer'});
-        validator.validate('json-web-token', _.noop);
 
-        expect(request).toHaveBeenCalledWith('http://a-public-key-server/an-issuer/public.pem');
+        validator.validate('json-web-token', function () {
+            expect(request).toHaveBeenCalledWith('http://a-public-key-server/an-issuer/public.pem');
+            done();
+        });
     });
 
     it('should verify the token using fetched public key', function (done) {
@@ -49,7 +51,7 @@ describe('jwt-microservice-helper', function () {
     });
 
     it('should return the verified claims', function (done) {
-        jsonWebToken.verify.andReturn({iss: 'an-issuer'});
+        jsonWebToken.verify.andReturn(q({iss: 'an-issuer'}));
 
         validator.validate('json-web-token', function (error, claims) {
             expect(error).toBeUndefined('error');
@@ -58,7 +60,18 @@ describe('jwt-microservice-helper', function () {
         });
     });
 
-    it('should return an error if the claims section has no "iss" field', function (done) {
+    it('should return the error when decoding the claims fails', function (done) {
+        jsonWebToken.decode.andThrow(new Error('decode failed'));
+
+        validator.validate('json-web-token', function (error, claims) {
+            expect(error).toBeDefined('error');
+            expect(error.message).toBe('decode failed', 'error.message');
+            expect(claims).toBeUndefined('claims');
+            done();
+        });
+    });
+
+    it('should return an error when the claims section has no "iss" field', function (done) {
         jsonWebToken.decode.andReturn({aToken: 'with-no-iss-field'});
 
         validator.validate('json-web-token', function (error, claims) {
@@ -69,19 +82,25 @@ describe('jwt-microservice-helper', function () {
         });
     });
 
-//    xit('should return an error if it cannot retrieve the public key', function (done) {
-//    });
-//
-//    xit('should throw an error if the token cannot be decoded', function () {
-//
-//    });
-//
-//
-//    xit('should throw an error if the token verification fails', function () {
-//
-//    });
-//
-//    xit('should throw an error if the token has expired', function () {
-//
-//    });
+    it('should return the error when fetching the public key fails', function (done) {
+        request.andReturn(q.reject(new Error('request failed')));
+
+        validator.validate('json-web-token', function (error, claims) {
+            expect(error).toBeDefined('error');
+            expect(error.message).toBe('request failed');
+            expect(claims).toBeUndefined('claims');
+            done();
+        });
+    });
+
+    it('should return the error when verifying the token fails', function (done) {
+        jsonWebToken.verify.andReturn(q.reject(new Error('token verification failed')));
+
+        validator.validate('json-web-token', function (error, claims) {
+            expect(error).toBeDefined('error');
+            expect(error.message).toBe('token verification failed');
+            expect(claims).toBeUndefined('claims');
+            done();
+        });
+    });
 });

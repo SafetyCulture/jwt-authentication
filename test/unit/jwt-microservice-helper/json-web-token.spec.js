@@ -40,5 +40,17 @@ describe('jwt-microservice-helper/json-web-token', function () {
                 done();
             });
         });
+
+        it('should return the error when the token verification fails', function (done) {
+            jsonWebToken.verify.andCallFake(function (jwtToken, publicKey, callback) {
+                callback(new Error('an error'));
+            });
+
+            jwtPromiseWrapper.verify('jwt-token', 'public-key').then(failTest(done)).fail(function (error) {
+                expect(error).toBeDefined('error');
+                expect(error.message).toBe('an error');
+                done();
+            });
+        });
     });
 });
