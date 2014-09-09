@@ -73,7 +73,7 @@ describe('jwt-micro-service-helper', function () {
         expect(callback).toHaveBeenCalledWith('Error retrieving public key');
     });
 
-    xit('should return the decoded claims section if verification is successful', function () {
+    it('should return the decoded claims section if verification is successful', function () {
         jsonWebToken.decode.andReturn({
             iss: 'an-issuer'
         });
