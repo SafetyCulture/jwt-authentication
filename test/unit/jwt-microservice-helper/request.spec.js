@@ -41,9 +41,11 @@ describe('jwt-microservice-helper/request', function () {
             callback(new Error('an error'));
         });
 
-        jwtRequest().then(failTest(done)).fail(function (error) {
+        jwtRequest('http://a-url.com').then(failTest(done)).fail(function (error) {
             expect(error).toBeDefined('error');
-            expect(error.message).toBe('an error', 'error.message');
+            expect(error.message).toBe(
+                'Unable to retrieve public key. Error: "an error" Url: "http://a-url.com"', 'error.message'
+            );
             done();
         });
     });
@@ -53,9 +55,13 @@ describe('jwt-microservice-helper/request', function () {
             callback(undefined, {statusCode: 404}, 'a-404-response-body');
         });
 
-        jwtRequest().then(failTest(done)).fail(function (error) {
+        jwtRequest('http://a-url.com').then(failTest(done)).fail(function (error) {
             expect(error).toBeDefined('error');
-            expect(error.message).toBe('404', 'error.message');
+            expect(error.message).toBe(
+                'Unable to retrieve public key. ' +
+                'Expected status code: "200" ' +
+                'Actual status code: "404" ' +
+                'Url: "http://a-url.com"', 'error.message');
             done();
         });
     });

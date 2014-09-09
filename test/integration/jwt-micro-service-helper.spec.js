@@ -31,7 +31,12 @@ describe ('jwt-microservice-helper', function () {
             createValidator('http://localhost:8000/does-not-exist').validate(jwtToken, function (error, claims) {
                 expect(claims).toBeUndefined('claims');
                 expect(error).toBeDefined('error');
-                expect(error.message).toBe('404');
+                expect(error.message).toBe(
+                    'Unable to retrieve public key. ' +
+                    'Expected status code: "200" ' +
+                    'Actual status code: "404" ' +
+                    'Url: "http://localhost:8000/does-not-exist/an-issuer/public.pem"'
+                );
                 done();
             });
         });
