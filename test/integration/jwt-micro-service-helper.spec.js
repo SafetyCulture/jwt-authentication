@@ -18,9 +18,20 @@ describe ('jwt-microservice-helper', function () {
         it('should validate a jwt token', function (done) {
             var jwtToken = createJwtToken('private');
 
-            createValidator().validate(jwtToken, function(err, claims) {
-                expect(err).toBeUndefined('error');
+            createValidator().validate(jwtToken, function(error, claims) {
+                expect(error).toBeUndefined('error');
                 expect(claims).toEqual({iss: 'an-issuer'}, 'claims');
+                done();
+            });
+        });
+
+        it('should return the error when unable to retrieve the public key', function (done) {
+            var jwtToken = createJwtToken('private');
+
+            createValidator('http://localhost:8000/does-not-exist').validate(jwtToken, function (error, claims) {
+                expect(error).toBeDefined('error');
+                expect(error.message).toBe('404');
+                expect(claims).toBeUndefined('claims');
                 done();
             });
         });
