@@ -4,23 +4,38 @@ var jwtMicroserviceHelper = require('../../lib/jwt-microservice-helper');
 
 describe ('jwt-microservice-helper', function () {
 
-	it('should validate a jwt token', function (done) {
-        var secret = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
+    describe('validate', function () {
+        var validator;
 
-		var payload = {
-            'iss': 'an-issuer'
-		};
-
-		var jwtToken = jwtSimple.encode(payload, secret, 'RS256');
-
-		var validator = jwtMicroserviceHelper.create({
-            publicKeyServer: 'http://localhost:8000'
+        beforeEach(function () {
+            validator = jwtMicroserviceHelper.create({publicKeyServer: 'http://localhost:8000'});
         });
 
-		validator.validate(jwtToken, function(err, claims) {
-			expect(err).toBeUndefined('error');
-            expect(claims).toEqual({iss: 'an-issuer'}, 'claims');
-            done();
-		});
-	});
+        var createJwtToken = function (privateKeyName) {
+            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/' + privateKeyName + '.pem');
+            var payload = {'iss': 'an-issuer'};
+            return jwtSimple.encode(payload, privateKey, 'RS256');
+        };
+
+        it('should validate a jwt token', function (done) {
+            var jwtToken = createJwtToken('private');
+
+            validator.validate(jwtToken, function(err, claims) {
+                expect(err).toBeUndefined('error');
+                expect(claims).toEqual({iss: 'an-issuer'}, 'claims');
+                done();
+            });
+        });
+
+        it('should return the error when validating the jwt token fails', function (done) {
+            var jwtToken = createJwtToken('private-wrong');
+
+            validator.validate(jwtToken, function(error, claims) {
+                expect(error).toBeDefined('error');
+                expect(error.message).toBe('Invalid token');
+                expect(claims).toBeUndefined('claims');
+                done();
+            });
+        });
+    });
 });
