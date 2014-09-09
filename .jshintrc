@@ -37,6 +37,8 @@
         "setFixtures": true,
         "it": true,
         "expect": true,
-        "spyOn": true
+        "spyOn": true,
+        "waitsFor": true,
+        "runs": true
     }
 }

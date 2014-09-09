@@ -103,4 +103,17 @@ describe('jwt-microservice-helper', function () {
             done();
         });
     });
+
+    it('should not invoke the callback with errors thrown from the callback', function () {
+        var callback = jasmine.createSpy('callback').andThrow(new Error('oh no!'));
+        validator.validate('json-web-token', callback);
+
+        waitsFor(function () {
+            return callback.callCount > 0;
+        });
+
+        runs(function () {
+            expect(callback.callCount).toBe(1);
+        });
+    });
 });

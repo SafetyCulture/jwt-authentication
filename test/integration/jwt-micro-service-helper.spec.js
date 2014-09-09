@@ -9,9 +9,9 @@ describe ('jwt-microservice-helper', function () {
             return jwtMicroserviceHelper.create({publicKeyServer: publicKeyServer || 'http://localhost:8000'});
         };
 
-        var createJwtToken = function (privateKeyName) {
+        var createJwtToken = function (privateKeyName, payload) {
             var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/' + privateKeyName + '.pem');
-            var payload = {'iss': 'an-issuer'};
+            payload = payload || {'iss': 'an-issuer'};
             return jwtSimple.encode(payload, privateKey, 'RS256');
         };
 
@@ -29,9 +29,9 @@ describe ('jwt-microservice-helper', function () {
             var jwtToken = createJwtToken('private');
 
             createValidator('http://localhost:8000/does-not-exist').validate(jwtToken, function (error, claims) {
+                expect(claims).toBeUndefined('claims');
                 expect(error).toBeDefined('error');
                 expect(error.message).toBe('404');
-                expect(claims).toBeUndefined('claims');
                 done();
             });
         });
@@ -40,9 +40,22 @@ describe ('jwt-microservice-helper', function () {
             var jwtToken = createJwtToken('private-wrong');
 
             createValidator().validate(jwtToken, function(error, claims) {
+                expect(claims).toBeUndefined('claims');
                 expect(error).toBeDefined('error');
                 expect(error.message).toBe('invalid signature');
+                done();
+            });
+        });
+
+        it('should return an error when the token is expired', function (done) {
+            var expiryTimeInSeconds = new Date(2013, 0, 1).getTime() / 1000;
+            var jwtToken = createJwtToken('private', {iss: 'an-issuer', exp: expiryTimeInSeconds});
+
+            createValidator().validate(jwtToken, function(error, claims) {
                 expect(claims).toBeUndefined('claims');
+                expect(error).toBeDefined('error');
+                expect(error.message).toBe('jwt expired');
+
                 done();
             });
         });
