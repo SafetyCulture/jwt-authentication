@@ -1,6 +1,6 @@
 var fs = require('fs');
 var jwtSimple = require('jwt-simple');
-var jwtMicroserviceHelper = require('../../lib/jwtMicroServiceHelper');
+var jwtMicroserviceHelper = require('../../lib/jwt-microservice-helper');
 
 describe ('jwt-microservice-helper', function () {
 
@@ -11,17 +11,15 @@ describe ('jwt-microservice-helper', function () {
             'iss': 'an-issuer'
 		};
 
-		var jwtToken = jwtSimple.encode(payload, secret);
+		var jwtToken = jwtSimple.encode(payload, secret, 'RS256');
 
 		var validator = jwtMicroserviceHelper.create({
             publicKeyServer: 'http://localhost:8000'
         });
 
 		validator.validate(jwtToken, function(err, claims) {
-			expect(err).toBe(undefined);
-            expect(claims).toEqual({
-                iss: 'an-issuer'
-            });
+			expect(err).toBeUndefined('error');
+            expect(claims).toEqual({iss: 'an-issuer'}, 'claims');
             done();
 		});
 	});
