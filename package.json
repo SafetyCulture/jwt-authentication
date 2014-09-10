@@ -2,7 +2,7 @@
   "name": "jwt-microservice-helper",
   "version": "0.0.0",
   "description": "Library that is used to create and verify json web tokens for service to service authentication purposes.",
-  "main": "index.js",
+  "main": "lib/jwt-microservice-helper.js",
   "scripts": {
     "test": "grunt"
   },
