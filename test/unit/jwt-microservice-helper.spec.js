@@ -8,7 +8,7 @@ describe('jwt-microservice-helper', function () {
     var validator;
 
     beforeEach(function () {
-        jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['decode', 'verify']);
+        jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['create', 'decode', 'verify']);
         jsonWebToken.decode.andReturn({iss: 'default-issuer'});
         jsonWebToken.verify.andReturn(q());
 
@@ -23,6 +23,11 @@ describe('jwt-microservice-helper', function () {
         validator = jwtMicroServiceHelper.create({
             publicKeyServer: 'http://a-public-key-server'
         });
+    });
+
+    it('should pass arguments to create', function() {
+        validator.create('iss', 'sub', {foo: 'bar'}, 'file');
+        expect(jsonWebToken.create).toHaveBeenCalledWith('iss', 'sub', {foo: 'bar'}, 'file');
     });
 
     it('should pass the given token to decode', function (done) {
