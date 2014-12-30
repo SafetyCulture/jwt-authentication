@@ -4,6 +4,46 @@ var jwtMicroserviceHelper = require('../../lib/jwt-microservice-helper');
 
 describe ('jwt-microservice-helper', function () {
 
+    describe('create', function () {
+        var createTokenCreator = function() {
+            return jwtMicroserviceHelper.create({});
+        };
+
+        var validateJwtToken = function (token, publicKeyName) {
+            var publicKey = fs.readFileSync('test/integration/key-server/an-issuer/' + publicKeyName + '.pem');
+            return jwtSimple.decode(token, publicKey);
+        };
+
+        it('should create a correctly signed jwt token', function () {
+            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
+            var jwt = createTokenCreator().create('an-issuer', 'a-subject', {}, privateKey);
+
+            var decodedJwt = validateJwtToken(jwt, 'public');
+
+            expect(decodedJwt.iss).toBe('an-issuer');
+            expect(decodedJwt.sub).toBe('a-subject');
+        });
+
+        it('should create a correctly signed jwt token with custom claims', function () {
+            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
+            var jwt = createTokenCreator().create('an-issuer', 'a-subject', {foo: 'abc', bar: 123}, privateKey);
+
+            var decodedJwt = validateJwtToken(jwt, 'public');
+
+            expect(decodedJwt.iss).toBe('an-issuer');
+            expect(decodedJwt.sub).toBe('a-subject');
+            expect(decodedJwt.foo).toBe('abc');
+            expect(decodedJwt.bar).toBe(123);
+        });
+
+        it('should create a signed jwt token that can only be verified with the right public key', function () {
+            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
+            var jwt = createTokenCreator().create('an-issuer', 'a-subject', {}, privateKey);
+
+            expect( function() {validateJwtToken(jwt, 'public');}).toThrow(new Error('Signature verification failed'));
+        });
+    });
+
     describe('validate', function () {
         var createValidator = function (publicKeyServer) {
             return jwtMicroserviceHelper.create({publicKeyServer: publicKeyServer || 'http://localhost:8000'});
