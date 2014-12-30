@@ -6,7 +6,6 @@ describe('jwt-microservice-helper/json-web-token', function () {
     var jsonWebTokenClaims;
     var jsonWebToken;
     var jwtPromiseWrapper;
-    var fs;
 
     beforeEach(function () {
         jsonWebTokenClaims = {};
@@ -15,18 +14,14 @@ describe('jwt-microservice-helper/json-web-token', function () {
             callback(undefined, jsonWebTokenClaims);
         });
 
-        fs = jasmine.createSpyObj('fs', ['readFileSync']);
-        fs.readFileSync.andReturn('private-key');
-
         jwtPromiseWrapper = specHelpers.requireWithMocks('jwt-microservice-helper/json-web-token', {
-            'jsonwebtoken': jsonWebToken,
-            'fs': fs
+            'jsonwebtoken': jsonWebToken
         });
     });
 
     describe('create', function () {
         it('should pass through the arguments to jsonWebToken.sign', function() {
-            jwtPromiseWrapper.create('issuer', 'subject', {}, 'private-key-file');
+            jwtPromiseWrapper.create('issuer', 'subject', {}, 'private-key');
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 {iss: 'issuer', sub: 'subject'},
                 'private-key',
@@ -34,7 +29,7 @@ describe('jwt-microservice-helper/json-web-token', function () {
         });
 
         it('should pass through custom claims if they are passed in', function() {
-            jwtPromiseWrapper.create('issuer', 'subject', {claim1: 'foo', claim2: 'bar'}, 'file');
+            jwtPromiseWrapper.create('issuer', 'subject', {claim1: 'foo', claim2: 'bar'}, 'private-key');
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 {iss: 'issuer', sub: 'subject', claim1: 'foo', claim2: 'bar'},
                 'private-key',

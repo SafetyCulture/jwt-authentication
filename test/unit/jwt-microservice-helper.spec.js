@@ -26,8 +26,8 @@ describe('jwt-microservice-helper', function () {
     });
 
     it('should pass arguments to create', function() {
-        validator.create('iss', 'sub', {foo: 'bar'}, 'file');
-        expect(jsonWebToken.create).toHaveBeenCalledWith('iss', 'sub', {foo: 'bar'}, 'file');
+        validator.create('iss', 'sub', {foo: 'bar'}, 'key');
+        expect(jsonWebToken.create).toHaveBeenCalledWith('iss', 'sub', {foo: 'bar'}, 'key');
     });
 
     it('should pass the given token to decode', function (done) {
