@@ -26,8 +26,14 @@ describe('jwt-microservice-helper', function () {
     });
 
     it('should pass arguments to create', function() {
-        validator.create('iss', 'sub', {foo: 'bar'}, 'key');
+        validator.generateToken('iss', 'sub', {foo: 'bar'}, 'key');
         expect(jsonWebToken.create).toHaveBeenCalledWith('iss', 'sub', {foo: 'bar'}, 'key');
+    });
+
+    it('should throw an error if config.publicKeyServer is not set', function() {
+        validator = jwtMicroServiceHelper.create({});
+        expect(function() {validator.generateToken('iss', 'sub', {}, 'key');}).toThrow(
+            new Error('Required config value config.publicKeyServer is missing.'));
     });
 
     it('should pass the given token to decode', function (done) {

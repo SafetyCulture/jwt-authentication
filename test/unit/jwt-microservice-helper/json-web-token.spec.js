@@ -35,6 +35,12 @@ describe('jwt-microservice-helper/json-web-token', function () {
                 'private-key',
                 {algorithm: 'RS256'});
         });
+
+        it('should not modify the claims object passed in', function() {
+            var claims = {claim1: 'foo', claim2: {obj: 'a'}};
+            jwtPromiseWrapper.create('issuer', 'subject', claims, 'private-key');
+            expect(claims).toEqual({claim1: 'foo', claim2: {obj: 'a'}});
+        });
     });
 
     describe('decode', function () {
