@@ -6,6 +6,7 @@ describe('jwt-microservice-helper', function () {
     var jwtMicroServiceHelper;
     var request;
     var validator;
+    var callback;
 
     beforeEach(function () {
         jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['create', 'decode', 'verify']);
@@ -20,19 +21,27 @@ describe('jwt-microservice-helper', function () {
             './jwt-microservice-helper/request': request
         });
 
+        callback = function(err, data) {
+            if (err) {
+                throw err;
+            } else {
+                return data;
+            }
+        };
+
         validator = jwtMicroServiceHelper.create({
             publicKeyServer: 'http://a-public-key-server'
         });
     });
 
     it('should pass arguments to create', function() {
-        validator.generateToken('iss', 'sub', {foo: 'bar'}, 'key');
+        validator.generateToken('iss', 'sub', {foo: 'bar'}, 'key', callback);
         expect(jsonWebToken.create).toHaveBeenCalledWith('iss', 'sub', {foo: 'bar'}, 'key');
     });
 
     it('should throw an error if config.publicKeyServer is not set', function() {
         validator = jwtMicroServiceHelper.create({});
-        expect(function() {validator.generateToken('iss', 'sub', {}, 'key');}).toThrow(
+        expect(function() {validator.generateToken('iss', 'sub', {}, 'key', callback);}).toThrow(
             new Error('Required config value config.publicKeyServer is missing.'));
     });
 
