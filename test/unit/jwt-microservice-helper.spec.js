@@ -26,20 +26,33 @@ describe('jwt-microservice-helper', function () {
         });
     });
 
+    it('should throw an error if config.publicKeyServer is not set', function() {
+        expect(function () {jwtMicroServiceHelper.create({foo: 'bar'});}).toThrow(
+            new Error('Required config value config.publicKeyServer is missing.'));
+    });
+
     it('should pass arguments to create', function(done) {
-        validator.generateToken('iss', 'sub', {foo: 'bar'}, 'key', function(error, token) {
-            expect(jsonWebToken.create).toHaveBeenCalledWith('iss', 'sub', {foo: 'bar'}, 'key');
+        validator.generateToken({iss: 'iss', sub: 'sub', foo: 'bar'}, {privateKey: 'key'}, function(error, token) {
+            expect(jsonWebToken.create).toHaveBeenCalledWith({iss: 'iss', sub: 'sub', foo: 'bar'}, 'key');
             expect(error).toBeNull();
             expect(token).toBe('token');
             done();
         });
     });
 
-    it('should throw an error if config.publicKeyServer is not set', function(done) {
-        validator = jwtMicroServiceHelper.create({});
-        validator.generateToken('iss', 'sub', {}, 'key', function(error, token) {
+    it('should throw an error if options is null', function(done) {
+        validator.generateToken({iss: 'iss', sub: 'sub'}, null, function(error, token) {
             expect(jsonWebToken.create).not.toHaveBeenCalled();
-            expect(error).toEqual(new Error('Required config value config.publicKeyServer is missing.'));
+            expect(error).toEqual(new Error('Required value options.privateKey is missing'));
+            expect(token).toBeUndefined();
+            done();
+        });
+    });
+
+    it('should throw an error if options.privateKey is missing', function(done) {
+        validator.generateToken({iss: 'iss', sub: 'sub'}, {publicKey: 'key'}, function(error, token) {
+            expect(jsonWebToken.create).not.toHaveBeenCalled();
+            expect(error).toEqual(new Error('Required value options.privateKey is missing'));
             expect(token).toBeUndefined();
             done();
         });

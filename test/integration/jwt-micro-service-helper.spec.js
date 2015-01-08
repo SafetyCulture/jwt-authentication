@@ -2,21 +2,58 @@ var fs = require('fs');
 var jwtSimple = require('jwt-simple');
 var jwtMicroserviceHelper = require('../../lib/jwt-microservice-helper');
 
+
+
 describe ('jwt-microservice-helper', function () {
 
-    describe('generateToken', function () {
-        var createTokenCreator = function() {
-            return jwtMicroserviceHelper.create({publicKeyServer: 'public-key-server-url'});
-        };
+    var createTokenCreator = function() {
+        return jwtMicroserviceHelper.create({publicKeyServer: 'public-key-server-url'});
+    };
 
-        var validateJwtToken = function (token, publicKeyName) {
-            var publicKey = fs.readFileSync('test/integration/key-server/an-issuer/' + publicKeyName + '.pem');
-            return jwtSimple.decode(token, publicKey);
-        };
+    var validateJwtToken = function (token, publicKeyName) {
+        var publicKey = fs.readFileSync('test/integration/key-server/an-issuer/' + publicKeyName + '.pem');
+        return jwtSimple.decode(token, publicKey);
+    };
+
+    it('should throw error if config is null', function() {
+        expect(function() {jwtMicroserviceHelper.create(null);}).toThrow(
+            new Error('Required config value config.publicKeyServer is missing.'));
+    });
+
+    it('should throw error if config is missing publicKeyServer field', function() {
+        expect(function() {jwtMicroserviceHelper.create({foo: 'bar'});}).toThrow(
+            new Error('Required config value config.publicKeyServer is missing.'));
+    });
+
+//    var verifyErrorCasesForGenerate = function(functionToTest) {
+//        it('should create a signed jwt token that can only be verified with the right public key', function (done) {
+//            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
+//            createTokenCreator()[functionToTest]('an-issuer', 'a-subject', {}, privateKey, function(error, token) {
+//                expect(error).toBeNull('error');
+//                expect( function() {validateJwtToken(token, 'public');}).toThrow(
+//                    new Error('Signature verification failed'));
+//                done();
+//            });
+//        });
+//
+//        it('should throw an error if config is missing publicKeyServer', function () {
+//            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
+//            jwtMicroserviceHelper.create({})[functionToTest]('an-issuer', 'a-subject', {}, privateKey,
+//                function(error, token) {
+//                    expect(error).toEqual(new Error('Required config value config.publicKeyServer is missing.'));
+//                    expect(token).toBeUndefined();
+//                });
+//        });
+//    };
+
+    describe('generateAuthorisationHeader', function() {
+    });
+
+    describe('generateToken', function () {
 
         it('should create a correctly signed jwt token', function (done) {
             var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
-            createTokenCreator().generateToken('an-issuer', 'a-subject', {}, privateKey,
+            createTokenCreator().generateToken({iss: 'an-issuer', sub: 'a-subject'}, {privateKey: privateKey},
                 function (error, jwt) {
                     expect(error).toBeNull('error');
                     var decodedJwt = validateJwtToken(jwt, 'public');
@@ -29,8 +66,8 @@ describe ('jwt-microservice-helper', function () {
 
         it('should create a correctly signed jwt token with custom claims', function (done) {
             var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
-            createTokenCreator().generateToken('an-issuer', 'a-subject', {foo: 'abc', bar: 123},
-                privateKey, function (error, jwt) {
+            createTokenCreator().generateToken({iss: 'an-issuer', sub: 'a-subject', foo: 'abc', bar: 123},
+                {privateKey: privateKey}, function (error, jwt) {
                     expect(error).toBeNull('error');
                     var decodedJwt = validateJwtToken(jwt, 'public');
 
@@ -42,22 +79,28 @@ describe ('jwt-microservice-helper', function () {
                 });
         });
 
+//        it('should correctly handle error cases', function () {
+//            verifyErrorCasesForGenerate('generateToken');
+//        });
+
         it('should create a signed jwt token that can only be verified with the right public key', function (done) {
             var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
-            createTokenCreator().generateToken('an-issuer', 'a-subject', {}, privateKey, function(error, token) {
-                expect(error).toBeNull('error');
-                expect( function() {validateJwtToken(token, 'public');}).toThrow(
-                    new Error('Signature verification failed'));
-                done();
-            });
+            createTokenCreator().generateToken({iss: 'an-issuer', sub: 'a-subject'}, {privateKey: privateKey},
+                function(error, token) {
+                    expect(error).toBeNull('error');
+                    expect( function() {validateJwtToken(token, 'public');}).toThrow(
+                        new Error('Signature verification failed'));
+                    done();
+                });
         });
 
-        it('should throw an error if config is missing publicKeyServer', function () {
+        it('should return an error if claims are missing "iss" field', function (done) {
             var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
-            jwtMicroserviceHelper.create({}).generateToken('an-issuer', 'a-subject', {}, privateKey,
+            createTokenCreator().generateToken({sub: 'a-subject'}, {privateKey: privateKey},
                 function(error, token) {
                     expect(error).toEqual(new Error('Required config value config.publicKeyServer is missing.'));
                     expect(token).toBeUndefined();
+                    done();
                 });
         });
     });

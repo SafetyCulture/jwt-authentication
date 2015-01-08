@@ -21,25 +21,19 @@ describe('jwt-microservice-helper/json-web-token', function () {
 
     describe('create', function () {
         it('should pass through the arguments to jsonWebToken.sign', function() {
-            jwtPromiseWrapper.create('issuer', 'subject', {}, 'private-key');
+            jwtPromiseWrapper.create({iss: 'issuer', sub: 'subject'}, 'private-key');
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 {iss: 'issuer', sub: 'subject'},
                 'private-key',
                 {algorithm: 'RS256'});
         });
 
-        it('should pass through custom claims if they are passed in', function() {
-            jwtPromiseWrapper.create('issuer', 'subject', {claim1: 'foo', claim2: 'bar'}, 'private-key');
+        it('should pass through additional claims if they are passed in', function() {
+            jwtPromiseWrapper.create({iss: 'issuer', sub: 'subject', claim1: 'foo', claim2: 'bar'}, 'private-key');
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 {iss: 'issuer', sub: 'subject', claim1: 'foo', claim2: 'bar'},
                 'private-key',
                 {algorithm: 'RS256'});
-        });
-
-        it('should not modify the claims object passed in', function() {
-            var claims = {claim1: 'foo', claim2: {obj: 'a'}};
-            jwtPromiseWrapper.create('issuer', 'subject', claims, 'private-key');
-            expect(claims).toEqual({claim1: 'foo', claim2: {obj: 'a'}});
         });
     });
 
