@@ -6,12 +6,12 @@ describe('jwt-microservice-helper', function () {
     var jwtMicroServiceHelper;
     var request;
     var validator;
-    var callback;
 
     beforeEach(function () {
         jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['create', 'decode', 'verify']);
         jsonWebToken.decode.andReturn({iss: 'default-issuer'});
         jsonWebToken.verify.andReturn(q());
+        jsonWebToken.create.andReturn('token');
 
         request = jasmine.createSpy('request');
         request.andReturn(q());
@@ -21,28 +21,28 @@ describe('jwt-microservice-helper', function () {
             './jwt-microservice-helper/request': request
         });
 
-        callback = function(err, data) {
-            if (err) {
-                throw err;
-            } else {
-                return data;
-            }
-        };
-
         validator = jwtMicroServiceHelper.create({
             publicKeyServer: 'http://a-public-key-server'
         });
     });
 
-    it('should pass arguments to create', function() {
-        validator.generateToken('iss', 'sub', {foo: 'bar'}, 'key', callback);
-        expect(jsonWebToken.create).toHaveBeenCalledWith('iss', 'sub', {foo: 'bar'}, 'key');
+    it('should pass arguments to create', function(done) {
+        validator.generateToken('iss', 'sub', {foo: 'bar'}, 'key', function(error, token) {
+            expect(jsonWebToken.create).toHaveBeenCalledWith('iss', 'sub', {foo: 'bar'}, 'key');
+            expect(error).toBeNull();
+            expect(token).toBe('token');
+            done();
+        });
     });
 
-    it('should throw an error if config.publicKeyServer is not set', function() {
+    it('should throw an error if config.publicKeyServer is not set', function(done) {
         validator = jwtMicroServiceHelper.create({});
-        expect(function() {validator.generateToken('iss', 'sub', {}, 'key', callback);}).toThrow(
-            new Error('Required config value config.publicKeyServer is missing.'));
+        validator.generateToken('iss', 'sub', {}, 'key', function(error, token) {
+            expect(jsonWebToken.create).not.toHaveBeenCalled();
+            expect(error).toEqual(new Error('Required config value config.publicKeyServer is missing.'));
+            expect(token).toBeUndefined();
+            done();
+        });
     });
 
     it('should pass the given token to decode', function (done) {
@@ -74,7 +74,7 @@ describe('jwt-microservice-helper', function () {
         jsonWebToken.verify.andReturn(q({iss: 'an-issuer'}));
 
         validator.validate('json-web-token', function (error, claims) {
-            expect(error).toBeUndefined('error');
+            expect(error).toBeNull('error');
             expect(claims).toEqual({iss: 'an-issuer'}, 'claims');
             done();
         });
