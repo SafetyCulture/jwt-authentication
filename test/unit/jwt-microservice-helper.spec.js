@@ -31,31 +31,46 @@ describe('jwt-microservice-helper', function () {
             new Error('Required config value config.publicKeyServer is missing.'));
     });
 
-    it('should pass arguments to create', function(done) {
-        validator.generateToken({iss: 'iss', sub: 'sub', foo: 'bar'}, {privateKey: 'key'}, function(error, token) {
+    var checkGenerateTokenHappyPath = function(functionToTest, expectedTokenValue, done) {
+        validator[functionToTest]({iss: 'iss', sub: 'sub', foo: 'bar'}, {privateKey: 'key'}, function(error, token) {
             expect(jsonWebToken.create).toHaveBeenCalledWith({iss: 'iss', sub: 'sub', foo: 'bar'}, 'key');
             expect(error).toBeNull();
-            expect(token).toBe('token');
+            expect(token).toBe(expectedTokenValue);
             done();
         });
+    };
+
+    it('should pass arguments to create', function(done) {
+        checkGenerateTokenHappyPath('generateToken', 'token', done);
+        checkGenerateTokenHappyPath('generateAuthorisationHeader', 'x-atl-jwt token', done);
     });
+
+    var checkThatErrorIsReturnedWhenOptionsIsNull = function(functionToTest, done) {
+        validator[functionToTest]({iss: 'iss', sub: 'sub'}, null, function(error, token) {
+            expect(jsonWebToken.create).not.toHaveBeenCalled();
+            expect(error).toEqual(new Error('Required value options.privateKey is'));
+            expect(token).toBeUndefined();
+            done();
+        });
+    };
 
     it('should throw an error if options is null', function(done) {
-        validator.generateToken({iss: 'iss', sub: 'sub'}, null, function(error, token) {
-            expect(jsonWebToken.create).not.toHaveBeenCalled();
-            expect(error).toEqual(new Error('Required value options.privateKey is missing'));
-            expect(token).toBeUndefined();
-            done();
-        });
+        checkThatErrorIsReturnedWhenOptionsIsNull('generateToken', done);
+        checkThatErrorIsReturnedWhenOptionsIsNull('generateAuthorisationHeader', done);
     });
 
-    it('should throw an error if options.privateKey is missing', function(done) {
-        validator.generateToken({iss: 'iss', sub: 'sub'}, {publicKey: 'key'}, function(error, token) {
+    var checkThatErrorIsReturnedWhenPrivateKeyIsMissing = function(functionToTest, done) {
+        validator[functionToTest]({iss: 'iss', sub: 'sub'}, {publicKey: 'key'}, function(error, token) {
             expect(jsonWebToken.create).not.toHaveBeenCalled();
             expect(error).toEqual(new Error('Required value options.privateKey is missing'));
             expect(token).toBeUndefined();
             done();
         });
+    };
+
+    it('should throw an error if options.privateKey is missing', function(done) {
+        checkThatErrorIsReturnedWhenPrivateKeyIsMissing('generateToken', done);
+        checkThatErrorIsReturnedWhenPrivateKeyIsMissing('generateAuthorisationHeader', done);
     });
 
     it('should pass the given token to decode', function (done) {

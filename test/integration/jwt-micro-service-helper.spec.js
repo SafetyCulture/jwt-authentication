@@ -1,10 +1,14 @@
 var fs = require('fs');
 var jwtSimple = require('jwt-simple');
 var jwtMicroserviceHelper = require('../../lib/jwt-microservice-helper');
-
-
+var _ = require('lodash');
 
 describe ('jwt-microservice-helper', function () {
+
+    // extract 'token' from 'x-atl-jwt token'
+    var getTokenFromAuthHeader = function(header) {
+        return header.split(' ')[1];
+    };
 
     var createTokenCreator = function() {
         return jwtMicroserviceHelper.create({publicKeyServer: 'public-key-server-url'});
@@ -25,51 +29,15 @@ describe ('jwt-microservice-helper', function () {
             new Error('Required config value config.publicKeyServer is missing.'));
     });
 
-//    var verifyErrorCasesForGenerate = function(functionToTest) {
-//        it('should create a signed jwt token that can only be verified with the right public key', function (done) {
-//            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
-//            createTokenCreator()[functionToTest]('an-issuer', 'a-subject', {}, privateKey, function(error, token) {
-//                expect(error).toBeNull('error');
-//                expect( function() {validateJwtToken(token, 'public');}).toThrow(
-//                    new Error('Signature verification failed'));
-//                done();
-//            });
-//        });
-//
-//        it('should throw an error if config is missing publicKeyServer', function () {
-//            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
-//            jwtMicroserviceHelper.create({})[functionToTest]('an-issuer', 'a-subject', {}, privateKey,
-//                function(error, token) {
-//                    expect(error).toEqual(new Error('Required config value config.publicKeyServer is missing.'));
-//                    expect(token).toBeUndefined();
-//                });
-//        });
-//    };
 
-    describe('generateAuthorisationHeader', function() {
-    });
-
-    describe('generateToken', function () {
-
-        it('should create a correctly signed jwt token', function (done) {
+    describe('generateToken and generateAuthorisationHeader', function () {
+        var shouldCreateCorrectlySignedToken = function(functionToTest, extractTokenFunction, done) {
             var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
-            createTokenCreator().generateToken({iss: 'an-issuer', sub: 'a-subject'}, {privateKey: privateKey},
-                function (error, jwt) {
+            createTokenCreator()[functionToTest]({iss: 'an-issuer', sub: 'a-subject', foo: 'abc', bar: 123},
+                {privateKey: privateKey}, function (error, data) {
                     expect(error).toBeNull('error');
-                    var decodedJwt = validateJwtToken(jwt, 'public');
-
-                    expect(decodedJwt.iss).toBe('an-issuer');
-                    expect(decodedJwt.sub).toBe('a-subject');
-                    done();
-                });
-        });
-
-        it('should create a correctly signed jwt token with custom claims', function (done) {
-            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
-            createTokenCreator().generateToken({iss: 'an-issuer', sub: 'a-subject', foo: 'abc', bar: 123},
-                {privateKey: privateKey}, function (error, jwt) {
-                    expect(error).toBeNull('error');
-                    var decodedJwt = validateJwtToken(jwt, 'public');
+                    var token = extractTokenFunction(data);
+                    var decodedJwt = validateJwtToken(token, 'public');
 
                     expect(decodedJwt.iss).toBe('an-issuer');
                     expect(decodedJwt.sub).toBe('a-subject');
@@ -77,31 +45,43 @@ describe ('jwt-microservice-helper', function () {
                     expect(decodedJwt.bar).toBe(123);
                     done();
                 });
+        };
+
+        it('should create a correctly signed jwt token', function (done) {
+            shouldCreateCorrectlySignedToken('generateToken', _.identity, done);
+            shouldCreateCorrectlySignedToken('generateAuthorisationHeader', getTokenFromAuthHeader, done);
         });
 
-//        it('should correctly handle error cases', function () {
-//            verifyErrorCasesForGenerate('generateToken');
-//        });
-
-        it('should create a signed jwt token that can only be verified with the right public key', function (done) {
+        var verifactionShouldFailIfTokenSignedWithWrongKey = function(functionToTest, extractTokenFunction, done) {
             var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
-            createTokenCreator().generateToken({iss: 'an-issuer', sub: 'a-subject'}, {privateKey: privateKey},
-                function(error, token) {
+            createTokenCreator()[functionToTest]({iss: 'an-issuer', sub: 'a-subject'}, {privateKey: privateKey},
+                function(error, data) {
                     expect(error).toBeNull('error');
+                    var token = extractTokenFunction(data);
                     expect( function() {validateJwtToken(token, 'public');}).toThrow(
                         new Error('Signature verification failed'));
                     done();
                 });
+        };
+
+        it('should create a signed jwt token that can only be verified with the right public key', function (done) {
+            verifactionShouldFailIfTokenSignedWithWrongKey('generateToken', _.identity, done);
+            verifactionShouldFailIfTokenSignedWithWrongKey('generateAuthorisationHeader', getTokenFromAuthHeader, done);
         });
 
-        it('should return an error if claims are missing "iss" field', function (done) {
+        var shouldFailIfClaimsAreMissingRequiredFields = function (functionToTest, done) {
             var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
-            createTokenCreator().generateToken({sub: 'a-subject'}, {privateKey: privateKey},
+            createTokenCreator()[functionToTest]({sub: 'a-subject'}, {privateKey: privateKey},
                 function(error, token) {
                     expect(error).toEqual(new Error('Required config value config.publicKeyServer is missing.'));
                     expect(token).toBeUndefined();
                     done();
                 });
+        };
+
+        it('should return an error if claims are missing "iss" field', function (done) {
+            shouldFailIfClaimsAreMissingRequiredFields('generateToken', done);
+            shouldFailIfClaimsAreMissingRequiredFields('generateAuthorisationHeader', done);
         });
     });
 
