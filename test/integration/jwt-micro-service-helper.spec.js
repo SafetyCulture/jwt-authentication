@@ -30,7 +30,7 @@ describe ('jwt-microservice-helper', function () {
     });
 
 
-    describe('generateToken and generateAuthorisationHeader', function () {
+    describe('generateToken and generateAuthorizationHeader', function () {
         var shouldCreateCorrectlySignedToken = function(functionToTest, extractTokenFunction, done) {
             var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
             createTokenCreator()[functionToTest]({iss: 'an-issuer', sub: 'a-subject', foo: 'abc', bar: 123},
@@ -49,7 +49,7 @@ describe ('jwt-microservice-helper', function () {
 
         it('should create a correctly signed jwt token', function (done) {
             shouldCreateCorrectlySignedToken('generateToken', _.identity, done);
-            shouldCreateCorrectlySignedToken('generateAuthorisationHeader', getTokenFromAuthHeader, done);
+            shouldCreateCorrectlySignedToken('generateAuthorizationHeader', getTokenFromAuthHeader, done);
         });
 
         var verifactionShouldFailIfTokenSignedWithWrongKey = function(functionToTest, extractTokenFunction, done) {
@@ -66,7 +66,7 @@ describe ('jwt-microservice-helper', function () {
 
         it('should create a signed jwt token that can only be verified with the right public key', function (done) {
             verifactionShouldFailIfTokenSignedWithWrongKey('generateToken', _.identity, done);
-            verifactionShouldFailIfTokenSignedWithWrongKey('generateAuthorisationHeader', getTokenFromAuthHeader, done);
+            verifactionShouldFailIfTokenSignedWithWrongKey('generateAuthorizationHeader', getTokenFromAuthHeader, done);
         });
 
         var shouldFailIfClaimsAreMissingRequiredFields = function (functionToTest, done) {
@@ -81,7 +81,7 @@ describe ('jwt-microservice-helper', function () {
 
         it('should return an error if claims are missing "iss" field', function (done) {
             shouldFailIfClaimsAreMissingRequiredFields('generateToken', done);
-            shouldFailIfClaimsAreMissingRequiredFields('generateAuthorisationHeader', done);
+            shouldFailIfClaimsAreMissingRequiredFields('generateAuthorizationHeader', done);
         });
     });
 

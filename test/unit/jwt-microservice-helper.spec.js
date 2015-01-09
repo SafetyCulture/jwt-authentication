@@ -42,7 +42,7 @@ describe('jwt-microservice-helper', function () {
 
     it('should pass arguments to create', function(done) {
         checkGenerateTokenHappyPath('generateToken', 'token', done);
-        checkGenerateTokenHappyPath('generateAuthorisationHeader', 'x-atl-jwt token', done);
+        checkGenerateTokenHappyPath('generateAuthorizationHeader', 'x-atl-jwt token', done);
     });
 
     var checkThatErrorIsReturnedWhenOptionsIsNull = function(functionToTest, done) {
@@ -56,7 +56,7 @@ describe('jwt-microservice-helper', function () {
 
     it('should throw an error if options is null', function(done) {
         checkThatErrorIsReturnedWhenOptionsIsNull('generateToken', done);
-        checkThatErrorIsReturnedWhenOptionsIsNull('generateAuthorisationHeader', done);
+        checkThatErrorIsReturnedWhenOptionsIsNull('generateAuthorizationHeader', done);
     });
 
     var checkThatErrorIsReturnedWhenPrivateKeyIsMissing = function(functionToTest, done) {
@@ -70,7 +70,7 @@ describe('jwt-microservice-helper', function () {
 
     it('should throw an error if options.privateKey is missing', function(done) {
         checkThatErrorIsReturnedWhenPrivateKeyIsMissing('generateToken', done);
-        checkThatErrorIsReturnedWhenPrivateKeyIsMissing('generateAuthorisationHeader', done);
+        checkThatErrorIsReturnedWhenPrivateKeyIsMissing('generateAuthorizationHeader', done);
     });
 
     it('should pass the given token to decode', function (done) {
