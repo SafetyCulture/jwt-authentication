@@ -8,9 +8,10 @@ describe('jwt-microservice-helper', function () {
     var validator;
 
     beforeEach(function () {
-        jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['decode', 'verify']);
+        jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['create', 'decode', 'verify']);
         jsonWebToken.decode.andReturn({iss: 'default-issuer'});
         jsonWebToken.verify.andReturn(q());
+        jsonWebToken.create.andReturn('token');
 
         request = jasmine.createSpy('request');
         request.andReturn(q());
@@ -23,6 +24,95 @@ describe('jwt-microservice-helper', function () {
         validator = jwtMicroServiceHelper.create({
             publicKeyServer: 'http://a-public-key-server'
         });
+    });
+
+    it('should throw an error if config.publicKeyServer is not set', function() {
+        expect(function () {jwtMicroServiceHelper.create({foo: 'bar'});}).toThrow(
+            new Error('Required config value config.publicKeyServer is missing.'));
+    });
+
+    var checkGenerateTokenHappyPath = function(functionToTest, expectedTokenValue, done) {
+        validator[functionToTest]({iss: 'iss', sub: 'sub', foo: 'bar'}, {privateKey: 'key'}, function(error, token) {
+            expect(jsonWebToken.create).toHaveBeenCalledWith({iss: 'iss', sub: 'sub', foo: 'bar'}, 'key');
+            expect(error).toBeNull();
+            expect(token).toBe(expectedTokenValue);
+            done();
+        });
+    };
+
+    it('should pass arguments to create', function(done) {
+        checkGenerateTokenHappyPath('generateToken', 'token', done);
+        checkGenerateTokenHappyPath('generateAuthorizationHeader', 'x-atl-jwt token', done);
+    });
+
+    var checkThatErrorIsReturnedWhenOptionsIsNull = function(functionToTest, done) {
+        validator[functionToTest]({iss: 'iss', sub: 'sub'}, null, function(error, token) {
+            expect(jsonWebToken.create).not.toHaveBeenCalled();
+            expect(error).toEqual(new Error('Required value options.privateKey is'));
+            expect(token).toBeUndefined();
+            done();
+        });
+    };
+
+    it('should throw an error if options is null', function(done) {
+        checkThatErrorIsReturnedWhenOptionsIsNull('generateToken', done);
+        checkThatErrorIsReturnedWhenOptionsIsNull('generateAuthorizationHeader', done);
+    });
+
+    var checkThatErrorIsReturnedWhenPrivateKeyIsMissing = function(functionToTest, done) {
+        validator[functionToTest]({iss: 'iss', sub: 'sub'}, {publicKey: 'key'}, function(error, token) {
+            expect(jsonWebToken.create).not.toHaveBeenCalled();
+            expect(error).toEqual(new Error('Required value options.privateKey is missing'));
+            expect(token).toBeUndefined();
+            done();
+        });
+    };
+
+    it('should throw an error if options.privateKey is missing', function(done) {
+        checkThatErrorIsReturnedWhenPrivateKeyIsMissing('generateToken', done);
+        checkThatErrorIsReturnedWhenPrivateKeyIsMissing('generateAuthorizationHeader', done);
+    });
+
+    var checkThatErrorIsReturnedWhenClaimsIsNull = function(functionToTest, done) {
+        validator[functionToTest](null, {publicKey: 'key'}, function(error, token) {
+            expect(jsonWebToken.create).not.toHaveBeenCalled();
+            expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+            expect(token).toBeUndefined();
+            done();
+        });
+    };
+
+    it('should throw an error if claims is null', function(done) {
+        checkThatErrorIsReturnedWhenClaimsIsNull('generateToken', done);
+        checkThatErrorIsReturnedWhenClaimsIsNull('generateAuthorizationHeader', done);
+    });
+
+    var checkThatErrorIsReturnedWhenClaimsHasNoIssField = function(functionToTest, done) {
+        validator[functionToTest]({sub: 'sub'}, {publicKey: 'key'}, function(error, token) {
+            expect(jsonWebToken.create).not.toHaveBeenCalled();
+            expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+            expect(token).toBeUndefined();
+            done();
+        });
+    };
+
+    it('should throw an error if "iss" field is missing from claims', function(done) {
+        checkThatErrorIsReturnedWhenClaimsHasNoIssField('generateToken', done);
+        checkThatErrorIsReturnedWhenClaimsHasNoIssField('generateAuthorizationHeader', done);
+    });
+
+    var checkThatErrorIsReturnedWhenClaimsHasNoSubField = function(functionToTest, done) {
+        validator[functionToTest]({iss: 'iss'}, {publicKey: 'key'}, function(error, token) {
+            expect(jsonWebToken.create).not.toHaveBeenCalled();
+            expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+            expect(token).toBeUndefined();
+            done();
+        });
+    };
+
+    it('should throw an error if "sub" field is missing from claims', function(done) {
+        checkThatErrorIsReturnedWhenClaimsHasNoSubField('generateToken', done);
+        checkThatErrorIsReturnedWhenClaimsHasNoSubField('generateAuthorizationHeader', done);
     });
 
     it('should pass the given token to decode', function (done) {
@@ -54,7 +144,7 @@ describe('jwt-microservice-helper', function () {
         jsonWebToken.verify.andReturn(q({iss: 'an-issuer'}));
 
         validator.validate('json-web-token', function (error, claims) {
-            expect(error).toBeUndefined('error');
+            expect(error).toBeNull('error');
             expect(claims).toEqual({iss: 'an-issuer'}, 'claims');
             done();
         });

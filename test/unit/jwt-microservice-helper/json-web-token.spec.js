@@ -9,13 +9,31 @@ describe('jwt-microservice-helper/json-web-token', function () {
 
     beforeEach(function () {
         jsonWebTokenClaims = {};
-        jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['decode', 'verify']);
+        jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['decode', 'verify', 'sign']);
         jsonWebToken.verify.andCallFake(function (jwtToken, publicKey, callback) {
             callback(undefined, jsonWebTokenClaims);
         });
 
         jwtPromiseWrapper = specHelpers.requireWithMocks('jwt-microservice-helper/json-web-token', {
             'jsonwebtoken': jsonWebToken
+        });
+    });
+
+    describe('create', function () {
+        it('should pass through the arguments to jsonWebToken.sign', function() {
+            jwtPromiseWrapper.create({iss: 'issuer', sub: 'subject'}, 'private-key');
+            expect(jsonWebToken.sign).toHaveBeenCalledWith(
+                {iss: 'issuer', sub: 'subject'},
+                'private-key',
+                {algorithm: 'RS256'});
+        });
+
+        it('should pass through additional claims if they are passed in', function() {
+            jwtPromiseWrapper.create({iss: 'issuer', sub: 'subject', claim1: 'foo', claim2: 'bar'}, 'private-key');
+            expect(jsonWebToken.sign).toHaveBeenCalledWith(
+                {iss: 'issuer', sub: 'subject', claim1: 'foo', claim2: 'bar'},
+                'private-key',
+                {algorithm: 'RS256'});
         });
     });
 
