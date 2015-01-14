@@ -69,19 +69,34 @@ describe ('jwt-microservice-helper', function () {
             verifactionShouldFailIfTokenSignedWithWrongKey('generateAuthorizationHeader', getTokenFromAuthHeader, done);
         });
 
-        var shouldFailIfClaimsAreMissingRequiredFields = function (functionToTest, done) {
-            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
+        var shouldFailIfClaimsIsMissingIssField = function (functionToTest, done) {
+            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
             createTokenCreator()[functionToTest]({sub: 'a-subject'}, {privateKey: privateKey},
                 function(error, token) {
-                    expect(error).toEqual(new Error('Required config value config.publicKeyServer is missing.'));
+                    expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
                     expect(token).toBeUndefined();
                     done();
                 });
         };
 
         it('should return an error if claims are missing "iss" field', function (done) {
-            shouldFailIfClaimsAreMissingRequiredFields('generateToken', done);
-            shouldFailIfClaimsAreMissingRequiredFields('generateAuthorizationHeader', done);
+            shouldFailIfClaimsIsMissingIssField('generateToken', done);
+            shouldFailIfClaimsIsMissingIssField('generateAuthorizationHeader', done);
+        });
+
+        var shouldFailIfClaimsIsMissingSubField = function (functionToTest, done) {
+            var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
+            createTokenCreator()[functionToTest]({iss: 'an-issuer'}, {privateKey: privateKey},
+                function(error, token) {
+                    expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+                    expect(token).toBeUndefined();
+                    done();
+                });
+        };
+
+        it('should return an error if claims are missing "sub" field', function (done) {
+            shouldFailIfClaimsIsMissingSubField('generateToken', done);
+            shouldFailIfClaimsIsMissingSubField('generateAuthorizationHeader', done);
         });
     });
 

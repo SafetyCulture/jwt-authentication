@@ -73,6 +73,48 @@ describe('jwt-microservice-helper', function () {
         checkThatErrorIsReturnedWhenPrivateKeyIsMissing('generateAuthorizationHeader', done);
     });
 
+    var checkThatErrorIsReturnedWhenClaimsIsNull = function(functionToTest, done) {
+        validator[functionToTest](null, {publicKey: 'key'}, function(error, token) {
+            expect(jsonWebToken.create).not.toHaveBeenCalled();
+            expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+            expect(token).toBeUndefined();
+            done();
+        });
+    };
+
+    it('should throw an error if claims is null', function(done) {
+        checkThatErrorIsReturnedWhenClaimsIsNull('generateToken', done);
+        checkThatErrorIsReturnedWhenClaimsIsNull('generateAuthorizationHeader', done);
+    });
+
+    var checkThatErrorIsReturnedWhenClaimsHasNoIssField = function(functionToTest, done) {
+        validator[functionToTest]({sub: 'sub'}, {publicKey: 'key'}, function(error, token) {
+            expect(jsonWebToken.create).not.toHaveBeenCalled();
+            expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+            expect(token).toBeUndefined();
+            done();
+        });
+    };
+
+    it('should throw an error if "iss" field is missing from claims', function(done) {
+        checkThatErrorIsReturnedWhenClaimsHasNoIssField('generateToken', done);
+        checkThatErrorIsReturnedWhenClaimsHasNoIssField('generateAuthorizationHeader', done);
+    });
+
+    var checkThatErrorIsReturnedWhenClaimsHasNoSubField = function(functionToTest, done) {
+        validator[functionToTest]({iss: 'iss'}, {publicKey: 'key'}, function(error, token) {
+            expect(jsonWebToken.create).not.toHaveBeenCalled();
+            expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+            expect(token).toBeUndefined();
+            done();
+        });
+    };
+
+    it('should throw an error if "sub" field is missing from claims', function(done) {
+        checkThatErrorIsReturnedWhenClaimsHasNoSubField('generateToken', done);
+        checkThatErrorIsReturnedWhenClaimsHasNoSubField('generateAuthorizationHeader', done);
+    });
+
     it('should pass the given token to decode', function (done) {
         validator.validate('json-web-token', function () {
             expect(jsonWebToken.decode).toHaveBeenCalledWith('json-web-token');
