@@ -24,20 +24,24 @@ The JWT Micro Service Helper is a solution to these problems.
 * Automatically retrieve the public key of the issuer of the token
 * Validate the token expiry
 
+## API
+
+Refer to the [api documentation](docs/API.md) for details on how to use the api.
+
 ##Example
 
 ### Client
 
 ```
 var jwtMicroServiceHelper = require('jwt-microservice-helper');
-var jwt = jwtMicroServiceHelper.create({publicKeyServer: 'https://your-public-key-store.com'});
-var tokenClaims = {iss: 'client-name', sub: 'client-name'};
-jwt.generateAuthorizationHeader(claims, {privateKey: privateKey}, function (error, authorizationHeader) {
+var jwtHelper = jwtMicroServiceHelper.create({publicKeyServer: 'https://public-key-server.com'});
+var claims = {iss: 'name-of-client', sub: 'name-of-client'};
+jwtHelper.generateAuthorizationHeader(claims, {privateKey: privateKey}, function (error, headerValue) {
     if (error) {
-        console.log('generating the token failed');
+        console.log('Generating the token failed.', error);
     } else {
-        //assign header to your request object
-        console.log(authorizationHeader); // -> "x-atl-jwt [jwt token]"
+        //assign headerValue to the Authorization header of your request object
+        console.log(headerValue); // -> "x-atl-jwt [token]"
     }
 });
 ```
@@ -46,19 +50,31 @@ jwt.generateAuthorizationHeader(claims, {privateKey: privateKey}, function (erro
 
 ```
 var jwtMicroServiceHelper = require('jwt-microservice-helper');
-var jwt = jwtMicroServiceHelper.create({publicKeyServer: 'https://your-public-key-store.com'});
-jwt.validate(token, function (error, claims) {
+var jwtHelper = jwtMicroServiceHelper.create({publicKeyServer: 'https://public-key-server.com'});
+jwtHelper.validate(token, function (error, claims) {
     if (error) {
-        console.log('the token is not valid');
+        console.log('Validating the token failed.', error);
     } else {
         console.log('the token claims are', claims);
     }
 });
 ```
 
-##API
+##Public Key Server
 
-*TODO: Add api documentation*
+The tokens are cryptographically signed using [RSA](http://en.wikipedia.org/wiki/RSA_%28cryptosystem%29). This means the token creators need a public and private key pair. Only the token creator should have access to the private key and it should be distributed to these services using a secure mechanism. The public key needs to be accessible to the receiver of the token. This is where the public key server fits into the picture.
+
+The public key server is a third party that token receivers trust. The public keys of token creators are published to this server. When the token receiver receives a token it will look at the `iss` claim of the token, retrieve the key for that issuer from the public key server and use it to validate the token.
+
+For example if the following token is sent:
+`{"alg": "HS256","typ": "JWT"}.{"iss": "name-of-client", "sub": "name-of-client"}.[signature]`
+
+The token receiver will use the public key found at:
+`https://public-key-server.com/name-of-client/public.pem`
+
+## Changelog
+
+Refer to the [changelog](docs/CHANGELOG.md) for a list of changes made in each version.
 
 ##Contributing
 
@@ -78,9 +94,14 @@ jwt.validate(token, function (error, claims) {
 
 * Use `grunt watch` to run the unit tests. When the relevant files are changed the unit tests will automatically be run.
 * Use `grunt watchIntegrationTest` to run the integration tests. When the relevant files are changed the integration tests will automatically be run.
+* Use `grunt docs` to preview the generated `docs/CHANGELOG.md` and `docs/API.md` files. **Do not commit these**, they are committed during the release task.
 * Use `grunt` as a sanity check before pushing.
 
-###Commit messages
+###Documentation
+
+This library uses [JSDoc](http://usejsdoc.org/) to document it's public api. If you are making changes to the api please update the JSDoc accordingly.
+
+###Changelog
 
 This library automatically generates the changelog from the commit messages. To facilitate this please follow [these conventions](https://github.com/ajoslin/conventional-changelog/blob/master/CONVENTIONS.md) in your commit messages.
 
