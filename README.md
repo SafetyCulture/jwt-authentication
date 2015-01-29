@@ -6,15 +6,58 @@
 
 **Note:** This library is a work in progress and does not yet have a stable api. If stability is important to you wait for the 1.0.0 release.
 
-*TODO: Add summary*
+[Json Web Tokens](http://jwt.io/) (JWTs) are a secure way to represent claims that are to be transferred between two parties.
+However on its own JWT does not provide an end to end authentication mechanism.
+Some of the missing pieces include key distribution, default token expiry and a standard set of claims.
+The JWT Micro Service Helper is a solution to these problems.
 
 ##Features
-*TODO: Add features list*
+
+###Client
+
+* Create JWT tokens signed with a private key
+* Add custom claims to a token
+
+###Server
+
+* Validate a JWT token
+* Automatically retrieve the public key of the issuer of the token
+* Validate the token expiry
 
 ##Example
-*TODO: Add example usage*
+
+### Client
+
+```
+var jwtMicroServiceHelper = require('jwt-microservice-helper');
+var jwt = jwtMicroServiceHelper.create({publicKeyServer: 'https://your-public-key-store.com'});
+var tokenClaims = {iss: 'client-name', sub: 'client-name'};
+jwt.generateAuthorizationHeader(claims, {privateKey: privateKey}, function (error, authorizationHeader) {
+    if (error) {
+        console.log('generating the token failed');
+    } else {
+        //assign header to your request object
+        console.log(authorizationHeader); // -> "x-atl-jwt [jwt token]"
+    }
+});
+```
+
+### Server
+
+```
+var jwtMicroServiceHelper = require('jwt-microservice-helper');
+var jwt = jwtMicroServiceHelper.create({publicKeyServer: 'https://your-public-key-store.com'});
+jwt.validate(token, function (error, claims) {
+    if (error) {
+        console.log('the token is not valid');
+    } else {
+        console.log('the token claims are', claims);
+    }
+});
+```
 
 ##API
+
 *TODO: Add api documentation*
 
 ##Contributing
