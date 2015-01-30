@@ -1,6 +1,6 @@
-#JWT Micro Service Helper
+#JWT Authentication
 
-[![Build Status](https://drone.io/bitbucket.org/atlassianlabs/jwt-microservice-helper/status.png)](https://drone.io/bitbucket.org/atlassianlabs/jwt-microservice-helper/latest)
+[![Build Status](https://drone.io/bitbucket.org/atlassianlabs/jwt-authentication/status.png)](https://drone.io/bitbucket.org/atlassianlabs/jwt-authentication/latest)
 
 > A library to create and verify json web tokens for service to service authentication purposes.
 
@@ -9,7 +9,7 @@
 [Json Web Tokens](http://jwt.io/) (JWTs) are a secure way to represent claims that are to be transferred between two parties.
 However on its own JWT does not provide an end to end authentication mechanism.
 Some of the missing pieces include key distribution, default token expiry and a standard set of claims.
-The JWT Micro Service Helper is a solution to these problems.
+The JWT Authentication is a solution to these problems.
 
 ##Features
 
@@ -33,10 +33,10 @@ Refer to the [api documentation](docs/API.md) for details on how to use the api.
 ### Client
 
 ```
-var jwtMicroServiceHelper = require('jwt-microservice-helper');
-var jwtHelper = jwtMicroServiceHelper.create({publicKeyServer: 'https://public-key-server.com'});
+var jwtAuthentication = require('jwt-authentication');
+var authenticator = jwtAuthentication.create({publicKeyServer: 'https://public-key-server.com'});
 var claims = {iss: 'name-of-client', sub: 'name-of-client'};
-jwtHelper.generateAuthorizationHeader(claims, {privateKey: privateKey}, function (error, headerValue) {
+authenticator.generateAuthorizationHeader(claims, {privateKey: privateKey}, function (error, headerValue) {
     if (error) {
         console.log('Generating the token failed.', error);
     } else {
@@ -49,9 +49,9 @@ jwtHelper.generateAuthorizationHeader(claims, {privateKey: privateKey}, function
 ### Server
 
 ```
-var jwtMicroServiceHelper = require('jwt-microservice-helper');
-var jwtHelper = jwtMicroServiceHelper.create({publicKeyServer: 'https://public-key-server.com'});
-jwtHelper.validate(token, function (error, claims) {
+var jwtAuthentication = require('jwt-authentication');
+var authenticator = jwtAuthentication.create({publicKeyServer: 'https://public-key-server.com'});
+authenticator.validate(token, function (error, claims) {
     if (error) {
         console.log('Validating the token failed.', error);
     } else {

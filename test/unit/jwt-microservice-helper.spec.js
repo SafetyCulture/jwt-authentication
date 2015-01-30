@@ -1,9 +1,9 @@
 var q = require('q');
 var specHelpers = require('./support/spec-helpers');
 
-describe('jwt-microservice-helper', function () {
+describe('jwt-authentication', function () {
     var jsonWebToken;
-    var jwtMicroServiceHelper;
+    var jwtAuthentication;
     var request;
     var validator;
 
@@ -16,18 +16,18 @@ describe('jwt-microservice-helper', function () {
         request = jasmine.createSpy('request');
         request.andReturn(q());
 
-        jwtMicroServiceHelper = specHelpers.requireWithMocks('jwt-microservice-helper', {
-            './jwt-microservice-helper/json-web-token': jsonWebToken,
-            './jwt-microservice-helper/request': request
+        jwtAuthentication = specHelpers.requireWithMocks('jwt-authentication', {
+            './jwt-authentication/json-web-token': jsonWebToken,
+            './jwt-authentication/request': request
         });
 
-        validator = jwtMicroServiceHelper.create({
+        validator = jwtAuthentication.create({
             publicKeyServer: 'http://a-public-key-server'
         });
     });
 
     it('should throw an error if config.publicKeyServer is not set', function() {
-        expect(function () {jwtMicroServiceHelper.create({foo: 'bar'});}).toThrow(
+        expect(function () {jwtAuthentication.create({foo: 'bar'});}).toThrow(
             new Error('Required config value config.publicKeyServer is missing.'));
     });
 

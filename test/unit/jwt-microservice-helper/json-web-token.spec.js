@@ -2,7 +2,7 @@ var specHelpers = require('../support/spec-helpers');
 
 var failTest = specHelpers.failTest;
 
-describe('jwt-microservice-helper/json-web-token', function () {
+describe('jwt-authentication/json-web-token', function () {
     var jsonWebTokenClaims;
     var jsonWebToken;
     var jwtPromiseWrapper;
@@ -14,7 +14,7 @@ describe('jwt-microservice-helper/json-web-token', function () {
             callback(undefined, jsonWebTokenClaims);
         });
 
-        jwtPromiseWrapper = specHelpers.requireWithMocks('jwt-microservice-helper/json-web-token', {
+        jwtPromiseWrapper = specHelpers.requireWithMocks('jwt-authentication/json-web-token', {
             'jsonwebtoken': jsonWebToken
         });
     });

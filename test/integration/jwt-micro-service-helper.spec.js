@@ -1,9 +1,9 @@
 var fs = require('fs');
 var jwtSimple = require('jwt-simple');
-var jwtMicroserviceHelper = require('../../lib/jwt-microservice-helper');
+var jwtAuthentication = require('../../lib/jwt-authentication');
 var _ = require('lodash');
 
-describe ('jwt-microservice-helper', function () {
+describe ('jwt-authentication', function () {
 
     // extract 'token' from 'x-atl-jwt token'
     var getTokenFromAuthHeader = function(header) {
@@ -11,7 +11,7 @@ describe ('jwt-microservice-helper', function () {
     };
 
     var createTokenCreator = function() {
-        return jwtMicroserviceHelper.create({publicKeyServer: 'public-key-server-url'});
+        return jwtAuthentication.create({publicKeyServer: 'public-key-server-url'});
     };
 
     var validateJwtToken = function (token, publicKeyName) {
@@ -20,12 +20,12 @@ describe ('jwt-microservice-helper', function () {
     };
 
     it('should throw error if config is null', function() {
-        expect(function() {jwtMicroserviceHelper.create(null);}).toThrow(
+        expect(function() {jwtAuthentication.create(null);}).toThrow(
             new Error('Required config value config.publicKeyServer is missing.'));
     });
 
     it('should throw error if config is missing publicKeyServer field', function() {
-        expect(function() {jwtMicroserviceHelper.create({foo: 'bar'});}).toThrow(
+        expect(function() {jwtAuthentication.create({foo: 'bar'});}).toThrow(
             new Error('Required config value config.publicKeyServer is missing.'));
     });
 
@@ -102,7 +102,7 @@ describe ('jwt-microservice-helper', function () {
 
     describe('validate', function () {
         var createValidator = function (publicKeyServer) {
-            return jwtMicroserviceHelper.create({publicKeyServer: publicKeyServer || 'http://localhost:8000'});
+            return jwtAuthentication.create({publicKeyServer: publicKeyServer || 'http://localhost:8000'});
         };
 
         var createJwtToken = function (privateKeyName, payload) {

@@ -1,14 +1,14 @@
 {
-  "name": "jwt-microservice-helper",
+  "name": "jwt-authentication",
   "version": "0.0.0",
   "description": "Library that is used to create and verify json web tokens for service to service authentication purposes.",
-  "main": "lib/jwt-microservice-helper.js",
+  "main": "lib/jwt-authentication.js",
   "scripts": {
     "test": "grunt"
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/atlassianlabs/jwt-microservice-helper"
+    "url": "https://bitbucket.org/atlassianlabs/jwt-authentication"
   },
   "author": "asrinivasan, bsayers",
   "license": "MIT",

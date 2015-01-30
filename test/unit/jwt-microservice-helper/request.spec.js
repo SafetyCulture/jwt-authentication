@@ -2,7 +2,7 @@ var specHelpers = require('../support/spec-helpers');
 
 var failTest = specHelpers.failTest;
 
-describe('jwt-microservice-helper/request', function () {
+describe('jwt-authentication/request', function () {
     var body;
     var jwtRequest;
     var request;
@@ -15,7 +15,7 @@ describe('jwt-microservice-helper/request', function () {
             callback(undefined, {statusCode: 200}, body);
         });
 
-        jwtRequest = specHelpers.requireWithMocks('jwt-microservice-helper/request', {
+        jwtRequest = specHelpers.requireWithMocks('jwt-authentication/request', {
             'request': request
         });
     });
