@@ -2,15 +2,15 @@
 
 **Modules**
 
-* [jwt-microservice-helper](#module_jwt-microservice-helper)
-  * [jwt-microservice-helper.create(config)](#module_jwt-microservice-helper.create)
+* [jwt-authentication](#module_jwt-authentication)
+  * [jwt-authentication.create(config)](#module_jwt-authentication.create)
 
 **Classes**
 
-* [class: JwtHelper](#JwtHelper)
-  * [jwtHelper.validate(jwtToken, callback)](#JwtHelper#validate)
-  * [jwtHelper.generateToken(claims, options, callback)](#JwtHelper#generateToken)
-  * [jwtHelper.generateAuthorizationHeader(claims, options, callback)](#JwtHelper#generateAuthorizationHeader)
+* [class: Authenticator](#Authenticator)
+  * [authenticator.validate(jwtToken, callback)](#Authenticator#validate)
+  * [authenticator.generateToken(claims, options, callback)](#Authenticator#generateToken)
+  * [authenticator.generateAuthorizationHeader(claims, options, callback)](#Authenticator#generateAuthorizationHeader)
 
 **Typedefs**
 
@@ -18,35 +18,35 @@
 * [callback: GenerateTokenCallback](#GenerateTokenCallback)
 * [callback: GenerateAuthorizationHeaderCallback](#GenerateAuthorizationHeaderCallback)
  
-<a name="module_jwt-microservice-helper"></a>
-#jwt-microservice-helper
-<a name="module_jwt-microservice-helper.create"></a>
-##jwt-microservice-helper.create(config)
-Constructor of `JwtHelper` objects.
+<a name="module_jwt-authentication"></a>
+#jwt-authentication
+<a name="module_jwt-authentication.create"></a>
+##jwt-authentication.create(config)
+Constructor of `Authenticator` objects.
 
 **Params**
 
 - config `Object`  
   - publicKeyServer `String` - A base url for the server containing the public keys of the issuers of the tokens.  
 
-**Returns**: [JwtHelper](#JwtHelper)  
+**Returns**: [Authenticator](#Authenticator)  
 **Example**  
 ```js
-var jwtMicroserviceHelper = require('jwt-microservice-helper');
-var jwtHelper = jwtMicroserviceHelper.create({publicKeyServer: 'https://server.com'});
+var jwtAuthentication = require('jwt-authentication');
+var authenticator = jwtAuthentication.create({publicKeyServer: 'https://public-key-server.com'});
 ```
 
-<a name="JwtHelper"></a>
-#class: JwtHelper
+<a name="Authenticator"></a>
+#class: Authenticator
 **Members**
 
-* [class: JwtHelper](#JwtHelper)
-  * [jwtHelper.validate(jwtToken, callback)](#JwtHelper#validate)
-  * [jwtHelper.generateToken(claims, options, callback)](#JwtHelper#generateToken)
-  * [jwtHelper.generateAuthorizationHeader(claims, options, callback)](#JwtHelper#generateAuthorizationHeader)
+* [class: Authenticator](#Authenticator)
+  * [authenticator.validate(jwtToken, callback)](#Authenticator#validate)
+  * [authenticator.generateToken(claims, options, callback)](#Authenticator#generateToken)
+  * [authenticator.generateAuthorizationHeader(claims, options, callback)](#Authenticator#generateAuthorizationHeader)
 
-<a name="JwtHelper#validate"></a>
-##jwtHelper.validate(jwtToken, callback)
+<a name="Authenticator#validate"></a>
+##authenticator.validate(jwtToken, callback)
 Validates a jwt token.
 The public key used for validation is retrieved from the configured
 `publicKeyServer` based on the issuer of the token.
@@ -58,7 +58,7 @@ The public key used for validation is retrieved from the configured
 
 **Example**  
 ```js
-jwtHelper.validate(token, function (error, claims) {
+authenticator.validate(token, function (error, claims) {
     if (error) {
         console.log('Token validation failed.', error);
     } else {
@@ -67,8 +67,8 @@ jwtHelper.validate(token, function (error, claims) {
 });
 ```
 
-<a name="JwtHelper#generateToken"></a>
-##jwtHelper.generateToken(claims, options, callback)
+<a name="Authenticator#generateToken"></a>
+##authenticator.generateToken(claims, options, callback)
 Generates a jwt token.
 
 **Params**
@@ -86,7 +86,7 @@ If the subject is generating tokens for itself the `sub` and `iss` should be the
 ```js
 var claims = {iss: 'name-of-client', sub: 'name-of-client'};
 var options = {privateKey: 'a-private-key'};
-jwtHelper.generateToken(claims, options, function (error, token) {
+authenticator.generateToken(claims, options, function (error, token) {
     if (error) {
         console.log('Generating token failed.', error);
     } else {
@@ -95,8 +95,8 @@ jwtHelper.generateToken(claims, options, function (error, token) {
 });
 ```
 
-<a name="JwtHelper#generateAuthorizationHeader"></a>
-##jwtHelper.generateAuthorizationHeader(claims, options, callback)
+<a name="Authenticator#generateAuthorizationHeader"></a>
+##authenticator.generateAuthorizationHeader(claims, options, callback)
 Generates an authorization header value containing a jwt token.
 The format of the value is `x-atl-jwt [token]`.
 
@@ -115,7 +115,7 @@ If the subject is generating tokens for itself the `sub` and `iss` should be the
 ```js
 var claims = {iss: 'name-of-client', sub: 'name-of-client'};
 var options = {privateKey: 'a-private-key'};
-jwtHelper.generateAuthorizationHeader(claims, options, function (error, headerValue) {
+authenticator.generateAuthorizationHeader(claims, options, function (error, headerValue) {
     if (error) {
         console.log('Generating authorization header failed.', error);
     } else {
