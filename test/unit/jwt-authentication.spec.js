@@ -36,9 +36,20 @@ describe('jwt-authentication', function () {
             return validator[methodToTestName](claims, options, callback);
         };
 
-        it('should pass arguments to create', function (done) {
+        it('should create a jwt token', function (done) {
             generateToken({iss: 'iss', sub: 'sub', foo: 'bar'}, {privateKey: 'key'}, function () {
-                expect(jsonWebToken.create).toHaveBeenCalledWith({iss: 'iss', sub: 'sub', foo: 'bar'}, 'key');
+                var expectedClaims = {iss: 'iss', sub: 'sub', foo: 'bar'};
+                var expectedOptions = {privateKey: 'key'};
+                expect(jsonWebToken.create).toHaveBeenCalledWith(expectedClaims, expectedOptions);
+                done();
+            });
+        });
+
+        it('should allow the expiry to be set on the token', function (done) {
+            generateToken({iss: 'iss', sub: 'sub'}, {expiresInMinutes: 10, privateKey: 'key'}, function () {
+                var expectedClaims = {iss: 'iss', sub: 'sub'};
+                var expectedOptions = {expiresInMinutes: 10, privateKey: 'key'};
+                expect(jsonWebToken.create).toHaveBeenCalledWith(expectedClaims, expectedOptions);
                 done();
             });
         });

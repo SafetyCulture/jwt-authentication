@@ -17,6 +17,7 @@ The JWT Authentication is a solution to these problems.
 
 * Create JWT tokens signed with a private key
 * Add custom claims to a token
+* Add expiry to tokens
 
 ### Server
 

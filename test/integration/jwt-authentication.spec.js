@@ -42,6 +42,29 @@ describe ('jwt-authentication', function () {
             });
         });
 
+        it('should create tokens with a default expiry of 30 seconds', function (done) {
+            var claims = {iss: 'an-issuer', sub: 'a-subject'};
+            generateToken(claims, {privateKey: privateKey}, function (error, token) {
+                expect(error).toBeNull('error');
+
+                var nowInSeconds = Math.floor(Date.now() / 1000);
+
+                var actualClaims = validateJwtToken(token, 'public');
+                expect(actualClaims.iat).toBeCloseTo(nowInSeconds, 1, 'issued at');
+                expect(actualClaims.exp).toBe(actualClaims.iat + 30, 'expires');
+                done();
+            });
+        });
+
+        it('should allow token expiry to be set', function (done) {
+            var claims = {iss: 'an-issuer', sub: 'a-subject'};
+            generateToken(claims, {expiresInMinutes: 10, privateKey: privateKey}, function (error, token) {
+                expect(error).toBeNull('error');
+                var actualClaims = validateJwtToken(token, 'public');
+                expect(actualClaims.exp).toBe(actualClaims.iat + (60 * 10), 'expires');
+                done();
+            });
+        });
 
         it('should create a signed jwt token that can only be verified with the right public key', function (done) {
             var claims = {iss: 'an-issuer', sub: 'a-subject'};
