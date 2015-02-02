@@ -26,7 +26,7 @@ The JWT Authentication is a solution to these problems.
 
 ## API
 
-Refer to the [api documentation](docs/API.md) for details on how to use the api.
+Refer to the [api documentation](https://bitbucket.org/atlassianlabs/jwt-authentication/src/master/docs/API.md) for details on how to use the api.
 
 ##Example
 
@@ -74,7 +74,7 @@ The token receiver will use the public key found at:
 
 ## Changelog
 
-Refer to the [changelog](docs/CHANGELOG.md) for a list of changes made in each version.
+Refer to the [changelog](https://bitbucket.org/atlassianlabs/jwt-authentication/src/master/docs/CHANGELOG.md) for a list of changes made in each version.
 
 ##Contributing
 
