@@ -110,3 +110,4 @@ This library automatically generates the changelog from the commit messages. To 
 * Run `grunt release:patch` to release a patch version of the library.
 * Run `grunt release:minor` to release a minor version of the library.
 * Run `grunt release:major` to release a major version of the library.
+
