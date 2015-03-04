@@ -29,13 +29,14 @@ describe ('jwt-authentication', function () {
         };
 
         it('should create a correctly signed jwt token', function (done) {
-            var claims = {iss: 'an-issuer', sub: 'a-subject', foo: 'abc', bar: 123};
+            var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience', foo: 'abc', bar: 123};
             generateToken(claims, {privateKey: privateKey}, function (error, token) {
                 expect(error).toBeNull('error');
 
                 var actualClaims = validateJwtToken(token, 'public');
                 expect(actualClaims.iss).toBe('an-issuer');
                 expect(actualClaims.sub).toBe('a-subject');
+                expect(actualClaims.aud).toBe('an-audience');
                 expect(actualClaims.foo).toBe('abc');
                 expect(actualClaims.bar).toBe(123);
                 done();
@@ -43,7 +44,7 @@ describe ('jwt-authentication', function () {
         });
 
         it('should create tokens with a default expiry of 30 seconds', function (done) {
-            var claims = {iss: 'an-issuer', sub: 'a-subject'};
+            var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience'};
             generateToken(claims, {privateKey: privateKey}, function (error, token) {
                 expect(error).toBeNull('error');
 
@@ -57,7 +58,7 @@ describe ('jwt-authentication', function () {
         });
 
         it('should allow token expiry to be set', function (done) {
-            var claims = {iss: 'an-issuer', sub: 'a-subject'};
+            var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience'};
             generateToken(claims, {expiresInMinutes: 10, privateKey: privateKey}, function (error, token) {
                 expect(error).toBeNull('error');
                 var actualClaims = validateJwtToken(token, 'public');
@@ -67,7 +68,7 @@ describe ('jwt-authentication', function () {
         });
 
         it('should create a signed jwt token that can only be verified with the right public key', function (done) {
-            var claims = {iss: 'an-issuer', sub: 'a-subject'};
+            var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience'};
             generateToken(claims, {privateKey: incorrectPrivateKey}, function(error, token) {
                 expect(error).toBeNull('error');
 
@@ -78,16 +79,30 @@ describe ('jwt-authentication', function () {
         });
 
         it('should return an error if claims are missing "iss" field', function (done) {
-            generateToken({sub: 'a-subject'}, {privateKey: privateKey}, function (error, token) {
-                expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+            var claims = {sub: 'a-subject', aud: 'an-audience'};
+            generateToken(claims, {privateKey: privateKey}, function (error, token) {
+                expect(error).toBeDefined();
+                expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
                 expect(token).toBeUndefined();
                 done();
             });
         });
 
         it('should return an error if claims are missing "sub" field', function (done) {
-            generateToken({iss: 'an-issuer'}, {privateKey: privateKey}, function (error, token) {
-                expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+            var claims = {iss: 'an-issuer', aud: 'an-audience'};
+            generateToken(claims, {privateKey: privateKey}, function (error, token) {
+                expect(error).toBeDefined();
+                expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
+                expect(token).toBeUndefined();
+                done();
+            });
+        });
+
+        it('should return an error if claims are missing "aud" field', function (done) {
+            var claims = {iss: 'an-issuer', sub: 'a-subject'};
+            generateToken(claims, {privateKey: privateKey}, function (error, token) {
+                expect(error).toBeDefined();
+                expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
                 expect(token).toBeUndefined();
                 done();
             });
@@ -104,7 +119,7 @@ describe ('jwt-authentication', function () {
 
     describe('generateAuthorizationHeader', function () {
         it('should prefix the token with "Bearer" followed by a space', function (done) {
-            var claims = {iss: 'an-issuer', sub: 'a-subject'};
+            var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience'};
             var options = {privateKey: privateKey};
             createAuthenticator().generateAuthorizationHeader(claims, options, function (error, headerValue) {
                 expect(error).toBeNull('error');

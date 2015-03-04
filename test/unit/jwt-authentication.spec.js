@@ -37,8 +37,8 @@ describe('jwt-authentication', function () {
         };
 
         it('should create a jwt token', function (done) {
-            generateToken({iss: 'iss', sub: 'sub', foo: 'bar'}, {privateKey: 'key'}, function () {
-                var expectedClaims = {iss: 'iss', sub: 'sub', foo: 'bar'};
+            generateToken({iss: 'iss', sub: 'sub', aud: 'aud', foo: 'bar'}, {privateKey: 'key'}, function () {
+                var expectedClaims = {iss: 'iss', sub: 'sub', aud: 'aud', foo: 'bar'};
                 var expectedOptions = {privateKey: 'key'};
                 expect(jsonWebToken.create).toHaveBeenCalledWith(expectedClaims, expectedOptions);
                 done();
@@ -46,8 +46,8 @@ describe('jwt-authentication', function () {
         });
 
         it('should allow the expiry to be set on the token', function (done) {
-            generateToken({iss: 'iss', sub: 'sub'}, {expiresInMinutes: 10, privateKey: 'key'}, function () {
-                var expectedClaims = {iss: 'iss', sub: 'sub'};
+            generateToken({iss: 'iss', sub: 'sub', aud: 'aud'}, {expiresInMinutes: 10, privateKey: 'key'}, function () {
+                var expectedClaims = {iss: 'iss', sub: 'sub', aud: 'aud'};
                 var expectedOptions = {expiresInMinutes: 10, privateKey: 'key'};
                 expect(jsonWebToken.create).toHaveBeenCalledWith(expectedClaims, expectedOptions);
                 done();
@@ -55,7 +55,7 @@ describe('jwt-authentication', function () {
         });
 
         it('should throw an error if options is null', function (done) {
-            generateToken({iss: 'iss', sub: 'sub'}, null, function(error, token) {
+            generateToken({iss: 'iss', sub: 'sub', aud: 'aud'}, null, function(error, token) {
                 expect(jsonWebToken.create).not.toHaveBeenCalled();
                 expect(error).toEqual(new Error('Required value options.privateKey is'));
                 expect(token).toBeUndefined();
@@ -64,7 +64,7 @@ describe('jwt-authentication', function () {
         });
 
         it('should throw an error if options.privateKey is missing', function (done) {
-            generateToken({iss: 'iss', sub: 'sub'}, {publicKey: 'key'}, function(error, token) {
+            generateToken({iss: 'iss', sub: 'sub', aud: 'aud'}, {publicKey: 'key'}, function(error, token) {
                 expect(jsonWebToken.create).not.toHaveBeenCalled();
                 expect(error).toEqual(new Error('Required value options.privateKey is missing'));
                 expect(token).toBeUndefined();
@@ -73,25 +73,37 @@ describe('jwt-authentication', function () {
         });
 
         it('should throw an error if claims is null', function (done) {
-            generateToken(null, {publicKey: 'key'}, function(error, token) {
+            generateToken(null, {privateKey: 'key'}, function(error, token) {
                 expect(jsonWebToken.create).not.toHaveBeenCalled();
-                expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+                expect(error).toBeDefined();
+                expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
                 expect(token).toBeUndefined();
                 done();
             });
         });
 
         it('should throw an error if "iss" field is missing from claims', function (done) {
-            generateToken({sub: 'sub'}, {publicKey: 'key'}, function(error, token) {
+            generateToken({sub: 'sub', aud: 'aud'}, {privateKey: 'key'}, function(error, token) {
                 expect(jsonWebToken.create).not.toHaveBeenCalled();
-                expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+                expect(error).toBeDefined();
+                expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
                 expect(token).toBeUndefined();
                 done();
             });
         });
 
         it('should throw an error if "sub" field is missing from claims', function (done) {
-            generateToken({iss: 'iss'}, {publicKey: 'key'}, function(error, token) {
+            generateToken({iss: 'iss', aud: 'aud'}, {privateKey: 'key'}, function(error, token) {
+                expect(jsonWebToken.create).not.toHaveBeenCalled();
+                expect(error).toBeDefined();
+                expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
+                expect(token).toBeUndefined();
+                done();
+            });
+        });
+
+        it('should throw an error if "aud" field is missing from claims', function (done) {
+            generateToken({iss: 'iss', sub: 'sub'}, {privateKey: 'key'}, function(error, token) {
                 expect(jsonWebToken.create).not.toHaveBeenCalled();
                 expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
                 expect(token).toBeUndefined();
@@ -104,7 +116,7 @@ describe('jwt-authentication', function () {
         it('should return the generated token', function (done) {
             jsonWebToken.create.andReturn('token');
 
-            validator.generateToken({iss: 'iss', sub: 'sub'}, {privateKey: 'key'}, function (error, token) {
+            validator.generateToken({iss: 'iss', sub: 'sub', aud: 'aud'}, {privateKey: 'key'}, function (error, token) {
                 expect(error).toBeNull();
                 expect(token).toBe('token');
                 done();
@@ -118,7 +130,7 @@ describe('jwt-authentication', function () {
         it('should return the authorization header containing the token', function (done) {
             jsonWebToken.create.andReturn('token');
 
-            var claims = {iss: 'iss', sub: 'sub'};
+            var claims = {iss: 'iss', sub: 'sub', aud: 'aud'};
             var options = {privateKey: 'key'};
             validator.generateAuthorizationHeader(claims, options, function (error, headerValue) {
                 expect(error).toBeNull();
