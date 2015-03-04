@@ -122,7 +122,7 @@ describe('jwt-authentication', function () {
             var options = {privateKey: 'key'};
             validator.generateAuthorizationHeader(claims, options, function (error, headerValue) {
                 expect(error).toBeNull();
-                expect(headerValue).toBe('x-atl-jwt token');
+                expect(headerValue).toBe('Bearer token');
                 done();
             });
         });

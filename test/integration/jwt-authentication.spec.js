@@ -103,12 +103,12 @@ describe ('jwt-authentication', function () {
     });
 
     describe('generateAuthorizationHeader', function () {
-        it('should prefix the token with "x-atl-jwt" followed by a space', function (done) {
+        it('should prefix the token with "Bearer" followed by a space', function (done) {
             var claims = {iss: 'an-issuer', sub: 'a-subject'};
             var options = {privateKey: privateKey};
             createAuthenticator().generateAuthorizationHeader(claims, options, function (error, headerValue) {
                 expect(error).toBeNull('error');
-                expect(headerValue.substr(0, 10)).toBe('x-atl-jwt ');
+                expect(headerValue.substr(0, 7)).toBe('Bearer ');
                 done();
             });
         });

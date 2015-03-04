@@ -42,7 +42,7 @@ authenticator.generateAuthorizationHeader(claims, {privateKey: privateKey}, func
         console.log('Generating the token failed.', error);
     } else {
         //assign headerValue to the Authorization header of your request object
-        console.log(headerValue); // -> "x-atl-jwt [token]"
+        console.log(headerValue); // -> "Bearer [token]"
     }
 });
 ```
