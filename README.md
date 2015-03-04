@@ -76,6 +76,24 @@ For example if the following token is sent:
 The token receiver will use the public key found at:
 `https://public-key-server.com/name-of-client/key-id.pem`
 
+## Creating the public and private key pair
+
+### Private Key
+
+```
+openssl genrsa -out private.pem 2048
+```
+
+This command will generate a private key. This private key must be kept secret, and should be distributed to the token generator in a secure way. Do not commit this key to version control.
+
+### Public Key
+
+```
+openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+```
+
+This command will generate a public key corresponding to the private key. This key should be uploaded to the public key server so receivers of tokens can validate the token.
+
 ## Changelog
 
 Refer to the [changelog](https://bitbucket.org/atlassianlabs/jwt-authentication/src/master/docs/CHANGELOG.md) for a list of changes made in each version.
