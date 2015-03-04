@@ -39,6 +39,7 @@
         "expect": true,
         "spyOn": true,
         "waitsFor": true,
-        "runs": true
+        "runs": true,
+        "JSON": true
     }
 }
