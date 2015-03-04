@@ -21,11 +21,11 @@ describe('jwt-authentication/json-web-token', function () {
 
     describe('create', function () {
         it('should pass through the arguments to jsonWebToken.sign', function() {
-            jwtPromiseWrapper.create({iss: 'issuer', sub: 'subject'}, {privateKey: 'private-key'});
+            jwtPromiseWrapper.create({iss: 'issuer', sub: 'subject'}, {kid: 'a-kid', privateKey: 'private-key'});
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 {iss: 'issuer', sub: 'subject'},
                 'private-key',
-                {algorithm: 'RS256', expiresInMinutes: 0.5});
+                {algorithm: 'RS256', expiresInMinutes: 0.5, header: {kid: 'a-kid'}});
         });
 
         it('should allow expiresInMinutes to be set', function () {
@@ -48,6 +48,21 @@ describe('jwt-authentication/json-web-token', function () {
                 {iss: 'issuer', sub: 'subject', claim1: 'foo', claim2: 'bar'},
                 jasmine.any(String),
                 jasmine.any(Object));
+        });
+
+        it('should pass through the kid as a header option', function () {
+            var claims = {iss: 'issuer', sub: 'subject'};
+            var options = {kid: 'a-kid', privateKey: 'private-key'};
+            jwtPromiseWrapper.create(claims, options);
+            expect(jsonWebToken.sign).toHaveBeenCalledWith(
+                jasmine.any(Object),
+                jasmine.any(String),
+                jasmine.objectContaining({
+                    header: {
+                        kid: 'a-kid'
+                    }
+                })
+            );
         });
     });
 

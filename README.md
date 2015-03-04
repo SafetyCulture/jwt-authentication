@@ -37,7 +37,8 @@ Refer to the [api documentation](https://bitbucket.org/atlassianlabs/jwt-authent
 var jwtAuthentication = require('jwt-authentication');
 var authenticator = jwtAuthentication.create({publicKeyServer: 'https://public-key-server.com'});
 var claims = {iss: 'name-of-client', sub: 'name-of-client', aud: 'name-of-server'};
-authenticator.generateAuthorizationHeader(claims, {privateKey: privateKey}, function (error, headerValue) {
+var options = {privateKey: privateKey, kid: 'a-kid'};
+authenticator.generateAuthorizationHeader(claims, options, function (error, headerValue) {
     if (error) {
         console.log('Generating the token failed.', error);
     } else {
