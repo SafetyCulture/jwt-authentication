@@ -63,7 +63,8 @@ describe('jwt-authentication', function () {
             var options = null;
             generateToken(claims, options, function(error, token) {
                 expect(jsonWebToken.create).not.toHaveBeenCalled();
-                expect(error).toEqual(new Error('Required value options.privateKey is'));
+                expect(error).toBeDefined();
+                expect(error.message).toEqual('Options must contain "privateKey" and "kid" fields');
                 expect(token).toBeUndefined();
                 done();
             });
@@ -74,7 +75,8 @@ describe('jwt-authentication', function () {
             var options = {kid: 'kid', publicKey: 'key'};
             generateToken(claims, options, function(error, token) {
                 expect(jsonWebToken.create).not.toHaveBeenCalled();
-                expect(error).toEqual(new Error('Options must contain "privateKey" and "kid" fields'));
+                expect(error).toBeDefined();
+                expect(error.message).toEqual('Options must contain "privateKey" and "kid" fields');
                 expect(token).toBeUndefined();
                 done();
             });
@@ -85,7 +87,8 @@ describe('jwt-authentication', function () {
             var options = {privateKey: 'key'};
             generateToken(claims, options, function(error, token) {
                 expect(jsonWebToken.create).not.toHaveBeenCalled();
-                expect(error).toEqual(new Error('Options must contain "privateKey" and "kid" fields'));
+                expect(error).toBeDefined();
+                expect(error.message).toEqual('Options must contain "privateKey" and "kid" fields');
                 expect(token).toBeUndefined();
                 done();
             });
@@ -109,7 +112,7 @@ describe('jwt-authentication', function () {
             generateToken(claims, options, function(error, token) {
                 expect(jsonWebToken.create).not.toHaveBeenCalled();
                 expect(error).toBeDefined();
-                expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
+                expect(error.message).toEqual('claims body must contain "iss", "sub" and "aud" fields');
                 expect(token).toBeUndefined();
                 done();
             });
@@ -121,7 +124,7 @@ describe('jwt-authentication', function () {
             generateToken(claims, options, function(error, token) {
                 expect(jsonWebToken.create).not.toHaveBeenCalled();
                 expect(error).toBeDefined();
-                expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
+                expect(error.message).toEqual('claims body must contain "iss", "sub" and "aud" fields');
                 expect(token).toBeUndefined();
                 done();
             });
@@ -132,7 +135,8 @@ describe('jwt-authentication', function () {
             var options = {kid:'kid', privateKey: 'key'};
             generateToken(claims, options, function(error, token) {
                 expect(jsonWebToken.create).not.toHaveBeenCalled();
-                expect(error).toEqual(new Error('claims body must have both the "iss" and "sub" fields'));
+                expect(error).toBeDefined();
+                expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
                 expect(token).toBeUndefined();
                 done();
             });
