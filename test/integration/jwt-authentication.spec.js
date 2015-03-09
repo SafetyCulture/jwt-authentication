@@ -1,7 +1,8 @@
+var _ = require('lodash');
 var fs = require('fs');
 var jwtSimple = require('jwt-simple');
 var jwtAuthentication = require('../../lib/jwt-authentication');
-var _ = require('lodash');
+var q = require('q');
 
 describe ('jwt-authentication', function () {
 
@@ -79,6 +80,35 @@ describe ('jwt-authentication', function () {
                 var validate = _.partial(validateJwtToken, token, 'public');
                 expect(validate).toThrow(new Error('Signature verification failed'));
                 done();
+            });
+        });
+
+        it('should create tokens with a generated jti claim', function (done) {
+            var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience'};
+            var options = {kid: 'path/to/publicKey', privateKey: privateKey};
+            generateToken(claims, options, function (error, token) {
+                expect(error).toBeNull('error');
+
+                var actualClaims = validateJwtToken(token, 'public');
+                expect(actualClaims.jti).toEqual(jasmine.any(String));
+                done();
+            });
+        });
+
+        it('should not be trivial to generate the same jti claim twice', function (done) {
+            var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience'};
+            var options = {kid: 'path/to/publicKey', privateKey: privateKey};
+
+            var generateTokenWithClaims = q.nfbind(generateToken, claims, options);
+
+            q.all([generateTokenWithClaims(), generateTokenWithClaims()]).spread(function (token1, token2) {
+                var claims1 = validateJwtToken(token1, 'public');
+                var claims2 = validateJwtToken(token2, 'public');
+
+                expect(claims1.jti).not.toEqual(claims2.jti);
+                done();
+            }).fail(function () {
+                done('Expected promise to succeed');
             });
         });
 

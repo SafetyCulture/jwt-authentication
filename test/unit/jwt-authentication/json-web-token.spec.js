@@ -23,7 +23,7 @@ describe('jwt-authentication/json-web-token', function () {
         it('should pass through the arguments to jsonWebToken.sign', function() {
             jwtPromiseWrapper.create({iss: 'issuer', sub: 'subject'}, {kid: 'a-kid', privateKey: 'private-key'});
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
-                {iss: 'issuer', sub: 'subject'},
+                {iss: 'issuer', sub: 'subject', jti: jasmine.any(String)},
                 'private-key',
                 {algorithm: 'RS256', expiresInMinutes: 0.5, header: {kid: 'a-kid'}});
         });
@@ -45,7 +45,7 @@ describe('jwt-authentication/json-web-token', function () {
                 {privateKey: 'private-key'}
             );
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
-                {iss: 'issuer', sub: 'subject', claim1: 'foo', claim2: 'bar'},
+                {iss: 'issuer', sub: 'subject', jti: jasmine.any(String), claim1: 'foo', claim2: 'bar'},
                 jasmine.any(String),
                 jasmine.any(Object));
         });
@@ -62,6 +62,34 @@ describe('jwt-authentication/json-web-token', function () {
                         kid: 'a-kid'
                     }
                 })
+            );
+        });
+
+        it('should include generated jti claim', function () {
+            var claims = {iss: 'issuer', sub: 'subject'};
+            var options = {kid: 'a-kid', privateKey: 'private-key'};
+            jwtPromiseWrapper.create(claims, options);
+
+            expect(jsonWebToken.sign).toHaveBeenCalledWith(
+                jasmine.objectContaining({
+                    jti: jasmine.any(String)
+                }),
+                jasmine.any(String),
+                jasmine.any(Object)
+            );
+        });
+
+        it('should not be possible to override the jti claim', function () {
+            var claims = {jti: ['not', 'a string']};
+            var options = {kid: 'a-kid', privateKey: 'private-key'};
+            jwtPromiseWrapper.create(claims, options);
+
+            expect(jsonWebToken.sign).toHaveBeenCalledWith(
+                jasmine.objectContaining({
+                    jti: jasmine.any(String)
+                }),
+                jasmine.any(String),
+                jasmine.any(Object)
             );
         });
     });

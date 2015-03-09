@@ -141,6 +141,21 @@ describe('jwt-authentication', function () {
                 done();
             });
         });
+
+        it('should throw an error if signing the token generated an error', function (done) {
+            jsonWebToken.create.andCallFake(function () {
+                throw new Error('error');
+            });
+
+            var claims = {iss: 'iss', aud: 'aud', sub: 'sub'};
+            var options = {kid:'kid', privateKey: 'key'};
+            generateToken(claims, options, function(error, token) {
+                expect(error).toBeDefined();
+                expect(error.message).toBe('Error generating token');
+                expect(token).toBeUndefined();
+                done();
+            });
+        });
     };
 
     describe('generateToken', function () {
