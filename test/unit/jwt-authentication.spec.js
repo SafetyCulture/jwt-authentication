@@ -94,52 +94,29 @@ describe('jwt-authentication', function () {
             });
         });
 
-        it('should throw an error if claims is null', function (done) {
-            var claims = null;
-            var options = {kid:'kid', privateKey: 'key'};
-            generateToken(claims, options, function(error, token) {
-                expect(jsonWebToken.create).not.toHaveBeenCalled();
-                expect(error).toBeDefined();
-                expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
-                expect(token).toBeUndefined();
-                done();
+        var itShouldThrowErrorWhenClaimsAreInvalid = function (spec, claims) {
+            it('should throw an error if ' + spec, function (done) {
+                var options = {kid: 'kid', privateKey: 'key'};
+                generateToken(claims, options, function (error, token) {
+                    expect(jsonWebToken.create).not.toHaveBeenCalled();
+                    expect(error).toBeDefined();
+                    expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
+                    expect(token).toBeUndefined();
+                    done();
+                });
             });
-        });
+        };
 
-        it('should throw an error if "iss" field is missing from claims', function (done) {
-            var claims = {sub: 'sub', aud: 'aud'};
-            var options = {kid:'kid', privateKey: 'key'};
-            generateToken(claims, options, function(error, token) {
-                expect(jsonWebToken.create).not.toHaveBeenCalled();
-                expect(error).toBeDefined();
-                expect(error.message).toEqual('claims body must contain "iss", "sub" and "aud" fields');
-                expect(token).toBeUndefined();
-                done();
-            });
-        });
+        describe('claims validation', function () {
+            itShouldThrowErrorWhenClaimsAreInvalid('claims is null', null);
 
-        it('should throw an error if "sub" field is missing from claims', function (done) {
-            var claims = {iss: 'iss', aud: 'aud'};
-            var options = {kid:'kid', privateKey: 'key'};
-            generateToken(claims, options, function(error, token) {
-                expect(jsonWebToken.create).not.toHaveBeenCalled();
-                expect(error).toBeDefined();
-                expect(error.message).toEqual('claims body must contain "iss", "sub" and "aud" fields');
-                expect(token).toBeUndefined();
-                done();
-            });
-        });
+            itShouldThrowErrorWhenClaimsAreInvalid('iss field is missing', {sub: 'sub', aud: 'aud'});
+            itShouldThrowErrorWhenClaimsAreInvalid('sub field is missing', {iss: 'iss', aud: 'aud'});
+            itShouldThrowErrorWhenClaimsAreInvalid('aud field is missing', {iss: 'iss', sub: 'sub'});
 
-        it('should throw an error if "aud" field is missing from claims', function (done) {
-            var claims = {iss: 'iss', sub: 'sub'};
-            var options = {kid:'kid', privateKey: 'key'};
-            generateToken(claims, options, function(error, token) {
-                expect(jsonWebToken.create).not.toHaveBeenCalled();
-                expect(error).toBeDefined();
-                expect(error.message).toBe('claims body must contain "iss", "sub" and "aud" fields');
-                expect(token).toBeUndefined();
-                done();
-            });
+            itShouldThrowErrorWhenClaimsAreInvalid('iss field is null', {iss: null, sub: 'sub', aud: 'aud'});
+            itShouldThrowErrorWhenClaimsAreInvalid('sub field is null', {iss: 'iss', sub: null, aud: 'aud'});
+            itShouldThrowErrorWhenClaimsAreInvalid('aud field is null', {iss: 'iss', sub: 'sub', aud: null});
         });
 
         it('should throw an error if signing the token generated an error', function (done) {
