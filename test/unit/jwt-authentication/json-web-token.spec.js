@@ -10,8 +10,8 @@ describe('jwt-authentication/json-web-token', function () {
 
     beforeEach(function () {
         crypto = jasmine.createSpyObj('crypto', ['randomBytes']);
-        crypto.randomBytes.andCallFake(function (numBytes) {
-            return new Buffer(numBytes + '');
+        crypto.randomBytes.andCallFake(function () {
+            return new Buffer('');
         });
 
         jsonWebTokenClaims = {};
@@ -73,18 +73,20 @@ describe('jwt-authentication/json-web-token', function () {
         });
 
         it('should generate random jti claim and include it in the token', function () {
+            crypto.randomBytes.andCallFake(function () {
+                return new Buffer('20-random-bytes');
+            });
+            var twentyRandomBytesInHex = '32302d72616e646f6d2d6279746573';
+
             var claims = {iss: 'issuer', sub: 'subject'};
             var options = {kid: 'a-kid', privateKey: 'private-key'};
             jwtPromiseWrapper.create(claims, options);
 
-            var twentyBytes = 20;
-            var twentyBytesStringInHex = '3230';
-
-            expect(crypto.randomBytes).toHaveBeenCalledWith(twentyBytes);
+            expect(crypto.randomBytes).toHaveBeenCalledWith(20);
 
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 jasmine.objectContaining({
-                    jti: twentyBytesStringInHex
+                    jti: twentyRandomBytesInHex
                 }),
                 jasmine.any(String),
                 jasmine.any(Object)
