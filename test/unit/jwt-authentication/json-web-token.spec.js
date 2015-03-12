@@ -3,11 +3,17 @@ var specHelpers = require('../support/spec-helpers');
 var failTest = specHelpers.failTest;
 
 describe('jwt-authentication/json-web-token', function () {
+    var crypto;
     var jsonWebTokenClaims;
     var jsonWebToken;
     var jwtPromiseWrapper;
 
     beforeEach(function () {
+        crypto = jasmine.createSpyObj('crypto', ['randomBytes']);
+        crypto.randomBytes.andCallFake(function (numBytes) {
+            return new Buffer(numBytes + '');
+        });
+
         jsonWebTokenClaims = {};
         jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['decode', 'verify', 'sign']);
         jsonWebToken.verify.andCallFake(function (jwtToken, publicKey, callback) {
@@ -15,7 +21,8 @@ describe('jwt-authentication/json-web-token', function () {
         });
 
         jwtPromiseWrapper = specHelpers.requireWithMocks('jwt-authentication/json-web-token', {
-            'jsonwebtoken': jsonWebToken
+            'jsonwebtoken': jsonWebToken,
+            'crypto': crypto
         });
     });
 
@@ -65,14 +72,19 @@ describe('jwt-authentication/json-web-token', function () {
             );
         });
 
-        it('should include generated jti claim', function () {
+        it('should generate random jti claim and include it in the token', function () {
             var claims = {iss: 'issuer', sub: 'subject'};
             var options = {kid: 'a-kid', privateKey: 'private-key'};
             jwtPromiseWrapper.create(claims, options);
 
+            var twentyBytes = 20;
+            var twentyBytesStringInHex = '3230';
+
+            expect(crypto.randomBytes).toHaveBeenCalledWith(twentyBytes);
+
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 jasmine.objectContaining({
-                    jti: jasmine.any(String)
+                    jti: twentyBytesStringInHex
                 }),
                 jasmine.any(String),
                 jasmine.any(Object)
