@@ -45,6 +45,21 @@ describe ('jwt-authentication', function () {
             });
         });
 
+        it('should contain the kid header in the token', function (done) {
+            var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience', foo: 'abc', bar: 123};
+            var options = {kid: 'path/to/publicKey', privateKey: privateKey};
+            generateToken(claims, options, function (error, token) {
+                expect(error).toBeNull('error');
+
+                var segments = token.split('.');
+                var headerSegment = segments[0];
+                var header = JSON.parse(new Buffer(headerSegment, 'base64').toString());
+
+                expect(header.kid).toBe('path/to/publicKey');
+                done();
+            });
+        });
+
         it('should create tokens with a default expiry of 30 seconds', function (done) {
             var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience'};
             var options = {kid: 'path/to/publicKey', privateKey: privateKey};
