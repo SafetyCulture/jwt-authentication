@@ -13,7 +13,7 @@
   "contributors": [
       {"name": "Ben Sayers", "email": "bsayers@atlassian.com"},
       {"name": "David Richard", "email": "drichard@atlassian.com"},
-      {"name": "Ashwin Srinivasan", "email": "asrinivasan@atlassian.com"},
+      {"name": "Ashwin Srinivasan", "email": "asrinivasan@atlassian.com"}
   ],
   "license": "MIT",
   "devDependencies": {
