@@ -10,7 +10,11 @@
     "type": "git",
     "url": "https://bitbucket.org/atlassianlabs/jwt-authentication"
   },
-  "author": "asrinivasan, bsayers",
+  "contributors": [
+      {"name": "Ben Sayers", "email": "bsayers@atlassian.com"},
+      {"name": "David Richard", "email": "drichard@atlassian.com"},
+      {"name": "Ashwin Srinivasan", "email": "asrinivasan@atlassian.com"},
+  ],
   "license": "MIT",
   "devDependencies": {
     "grunt": "^0.4.5",
