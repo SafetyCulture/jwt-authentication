@@ -47,6 +47,9 @@ var authenticator = jwtAuthentication.create({publicKeyServer: 'https://public-k
 
 <a name="Authenticator#validate"></a>
 ##authenticator.validate(jwtToken, callback)
+WARNING: This method is out of date and does not comply with the spec anymore.
+Validating JWT tokens will not work.
+
 Validates a jwt token.
 The public key used for validation is retrieved from the configured
 `publicKeyServer` based on the issuer of the token.
@@ -78,14 +81,18 @@ Generates a jwt token.
 This name should match the name of a key in the `publicKeyServer`.  
   - sub `String` - Subject. The name of the system the token is for.
 If the subject is generating tokens for itself the `sub` and `iss` should be the same.  
+  - aud `String` - Audience. The value that identifies the resource server.  
 - options `Object`  
   - privateKey `String` - The private key to use when generating the token.  
+  - kid `String` - Key ID. The identifier of the key used to sign the token in the format
+'issuer/key-id' where issuer matches claims.iss.  
+  - \[expiresInMinutes=0.5\] `Number` - The number of minutes until the token expires.  
 - callback <code>[GenerateTokenCallback](#GenerateTokenCallback)</code> - The callback that is called when the token has been generated.  
 
 **Example**  
 ```js
-var claims = {iss: 'name-of-client', sub: 'name-of-client'};
-var options = {privateKey: 'a-private-key'};
+var claims = {iss: 'name-of-client', sub: 'name-of-client', aud: 'name-of-server'};
+var options = {privateKey: 'a-private-key', kid: 'name-of-client/key-id'};
 authenticator.generateToken(claims, options, function (error, token) {
     if (error) {
         console.log('Generating token failed.', error);
@@ -98,7 +105,7 @@ authenticator.generateToken(claims, options, function (error, token) {
 <a name="Authenticator#generateAuthorizationHeader"></a>
 ##authenticator.generateAuthorizationHeader(claims, options, callback)
 Generates an authorization header value containing a jwt token.
-The format of the value is `x-atl-jwt [token]`.
+The format of the value is `Bearer [token]`.
 
 **Params**
 
@@ -107,19 +114,23 @@ The format of the value is `x-atl-jwt [token]`.
 This name should match the name of a key in the `publicKeyServer`.  
   - sub `String` - Subject. The name of the system the token is for.
 If the subject is generating tokens for itself the `sub` and `iss` should be the same.  
+  - aud `String` - Audience. The value that identifies the resource server.  
 - options `Object`  
   - privateKey `String` - The private key to use when generating the token.  
+  - kid `String` - Key ID. The identifier of the key used to sign the token in the format
+'issuer/key-id' where issuer matches claims.iss.  
+  - \[expiresInMinutes=0.5\] `Number` - The number of minutes until the token expires.  
 - callback <code>[GenerateAuthorizationHeaderCallback](#GenerateAuthorizationHeaderCallback)</code> - The callback that is called when the authorization header has been generated.  
 
 **Example**  
 ```js
-var claims = {iss: 'name-of-client', sub: 'name-of-client'};
-var options = {privateKey: 'a-private-key'};
+var claims = {iss: 'name-of-client', sub: 'name-of-client', aud: 'name-of-server'};
+var options = {privateKey: 'a-private-key', kid: 'name-of-client/key-id'};
 authenticator.generateAuthorizationHeader(claims, options, function (error, headerValue) {
     if (error) {
         console.log('Generating authorization header failed.', error);
     } else {
-        console.log(headerValue); // -> "x-atl-jwt [token]"
+        console.log(headerValue); // -> "Bearer [token]"
     }
 });
 ```
