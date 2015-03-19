@@ -1,3 +1,12 @@
+<a name="0.0.4"></a>
+### 0.0.4 (2015-03-19)
+
+
+#### Features
+
+* Log more granular error when generating the token fails. ([17095f64](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/17095f64bc4b29493deeae752a90aceb7e7db923))
+
+
 <a name="0.0.3"></a>
 ### 0.0.3 (2015-03-13)
 
