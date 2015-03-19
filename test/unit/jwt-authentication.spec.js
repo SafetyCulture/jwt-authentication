@@ -121,14 +121,14 @@ describe('jwt-authentication', function () {
 
         it('should throw an error if signing the token generated an error', function (done) {
             jsonWebToken.create.andCallFake(function () {
-                throw new Error('error');
+                throw new Error('jsonWebTokenCreateError');
             });
 
             var claims = {iss: 'iss', aud: 'aud', sub: 'sub'};
             var options = {kid:'kid', privateKey: 'key'};
             generateToken(claims, options, function(error, token) {
                 expect(error).toBeDefined();
-                expect(error.message).toBe('Error generating token');
+                expect(error.message).toBe('Error generating token: jsonWebTokenCreateError');
                 expect(token).toBeUndefined();
                 done();
             });
