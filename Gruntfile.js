@@ -48,7 +48,7 @@ module.exports = function(grunt) {
                     var issueUrl = grunt.config.get('pkg.repository.url') + '/issue/' + issueId;
                     return '[' + issueId + '](' + issueUrl + ')';
                 },
-                dest: 'docs/CHANGELOG.md'
+                file: 'docs/CHANGELOG.md'
             }
         },
         bump: {
