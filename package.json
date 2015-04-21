@@ -1,6 +1,6 @@
 {
   "name": "jwt-authentication",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Library that is used to create and verify json web tokens for service to service authentication purposes.",
   "main": "lib/jwt-authentication.js",
   "scripts": {
