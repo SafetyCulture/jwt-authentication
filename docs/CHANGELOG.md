@@ -1,3 +1,13 @@
+<a name"0.0.5"></a>
+### 0.0.5 (2015-04-21)
+
+
+#### Bug Fixes
+
+* bump jsonwebtoken from 3.2.0 to 5.0.0 to fix a security bug. ([04c53122](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/04c53122acd8c88881c1cf78b452ca9ede3ccda7))
+
+
+
 <a name="0.0.4"></a>
 ### 0.0.4 (2015-03-19)
 
