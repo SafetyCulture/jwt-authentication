@@ -1,3 +1,6 @@
+var jwtAuthenticationMiddleware = require('./lib/server/http/jwt-auth-middleware');
+var jwtAuthenticationServer = require('./index').server;
+
 module.exports = function(grunt) {
 
     // Long stack traces for q
@@ -45,7 +48,27 @@ module.exports = function(grunt) {
         connect: {
             server: {
                 options: {
-                    base: 'test/integration/key-server'
+                    base: 'test/integration/key-server',
+                    middleware: function(connect, options, middlewares) {
+                        var validator = jwtAuthenticationServer.create({
+                            resourceServerAudience: 'an-audience',
+                            publicKeyBaseUrl: 'http://localhost:8000/'
+                        });
+                        var jwtMiddleware = jwtAuthenticationMiddleware.create(validator, ['an-issuer']);
+                        middlewares.unshift(function(req, res, next) {
+                            if (req.url !== '/needs/auth') return next();
+                            jwtMiddleware(req, res, next);
+                        });
+
+                        middlewares.push(function(req, res, next) {
+                            if (req.url === '/needs/auth') {
+                                res.end('Ok');
+                            }
+                            next();
+                        });
+
+                        return middlewares;
+                    }
                 }
             }
         },
