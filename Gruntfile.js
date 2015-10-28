@@ -3,9 +3,26 @@ module.exports = function(grunt) {
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        jasmine_node: {
-            unit: ['test/unit'],
-            integration: ['test/integration']
+        jasmine_nodejs: {
+            options: {
+                specNameSuffix: 'spec.js', // also accepts an array
+                stopOnFailure: false,
+                reporters: {
+                    console: {
+                        colors: true,
+                        cleanStack: 1,       // (0|false)|(1|true)|2|3
+                        verbosity: 4,        // (0|false)|1|2|3|(4|true)
+                        listStyle: 'indent', // 'flat'|'indent'
+                        activity: false
+                    }
+                }
+            },
+            unit: {
+                specs: ['test/unit/**/*']
+            },
+            integration: {
+                specs: ['test/integration/**/*']
+            }
         },
         jshint: {
             options: {
@@ -69,7 +86,7 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.loadNpmTasks('grunt-jasmine-node');
+    grunt.loadNpmTasks('grunt-jasmine-nodejs');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-watch');
@@ -80,8 +97,8 @@ module.exports = function(grunt) {
 
     grunt.renameTask('watch', 'grunt-contrib-watch');
 
-    grunt.registerTask('unitTest', ['jasmine_node:unit']);
-    grunt.registerTask('integrationTest', ['connect:server', 'jasmine_node:integration']);
+    grunt.registerTask('unitTest', ['jasmine_nodejs:unit']);
+    grunt.registerTask('integrationTest', ['connect:server', 'jasmine_nodejs:integration']);
     grunt.registerTask('buildAndTest', ['jshint:source', 'unitTest', 'integrationTest']);
     grunt.registerTask('docs', ['changelog', 'jsdoc2md']);
     grunt.registerTask('release', function(type) {

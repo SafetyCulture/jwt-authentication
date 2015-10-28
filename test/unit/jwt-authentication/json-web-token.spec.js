@@ -10,13 +10,13 @@ describe('jwt-authentication/json-web-token', function () {
 
     beforeEach(function () {
         crypto = jasmine.createSpyObj('crypto', ['randomBytes']);
-        crypto.randomBytes.andCallFake(function () {
+        crypto.randomBytes.and.callFake(function () {
             return new Buffer('');
         });
 
         jsonWebTokenClaims = {};
         jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['decode', 'verify', 'sign']);
-        jsonWebToken.verify.andCallFake(function (jwtToken, publicKey, callback) {
+        jsonWebToken.verify.and.callFake(function (jwtToken, publicKey, callback) {
             callback(undefined, jsonWebTokenClaims);
         });
 
@@ -32,7 +32,7 @@ describe('jwt-authentication/json-web-token', function () {
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 {iss: 'issuer', sub: 'subject', jti: jasmine.any(String)},
                 'private-key',
-                {algorithm: 'RS256', expiresInMinutes: 0.5, header: {kid: 'a-kid'}});
+                {algorithm: 'RS256', expiresInMinutes: 0.5, headers: {kid: 'a-kid'}});
         });
 
         it('should allow expiresInMinutes to be set', function () {
@@ -65,7 +65,7 @@ describe('jwt-authentication/json-web-token', function () {
                 jasmine.any(Object),
                 jasmine.any(String),
                 jasmine.objectContaining({
-                    header: {
+                    headers: {
                         kid: 'a-kid'
                     }
                 })
@@ -73,7 +73,7 @@ describe('jwt-authentication/json-web-token', function () {
         });
 
         it('should generate random jti claim and include it in the token', function () {
-            crypto.randomBytes.andCallFake(function () {
+            crypto.randomBytes.and.callFake(function () {
                 return new Buffer('20-random-bytes');
             });
             var twentyRandomBytesInHex = '32302d72616e646f6d2d6279746573';
@@ -131,7 +131,7 @@ describe('jwt-authentication/json-web-token', function () {
         });
 
         it('should return the error when the token verification fails', function (done) {
-            jsonWebToken.verify.andCallFake(function (jwtToken, publicKey, callback) {
+            jsonWebToken.verify.and.callFake(function (jwtToken, publicKey, callback) {
                 callback(new Error('an error'));
             });
 
