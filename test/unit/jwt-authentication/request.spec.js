@@ -11,7 +11,7 @@ describe('jwt-authentication/request', function () {
         body = '';
 
         request = jasmine.createSpy('request');
-        request.andCallFake(function (options, callback) {
+        request.and.callFake(function (options, callback) {
             callback(undefined, {statusCode: 200}, body);
         });
 
@@ -37,7 +37,7 @@ describe('jwt-authentication/request', function () {
     });
 
     it('should return the error when making the request fails', function (done) {
-        request.andCallFake(function (options, callback) {
+        request.and.callFake(function (options, callback) {
             callback(new Error('an error'));
         });
 
@@ -51,7 +51,7 @@ describe('jwt-authentication/request', function () {
     });
 
     it('should return an error when the response code is not 200', function (done) {
-        request.andCallFake(function (options, callback) {
+        request.and.callFake(function (options, callback) {
             callback(undefined, {statusCode: 404}, 'a-404-response-body');
         });
 
