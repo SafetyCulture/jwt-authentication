@@ -40,6 +40,8 @@
         "spyOn": true,
         "waitsFor": true,
         "runs": true,
-        "JSON": true
+        "JSON": true,
+        "beforeAll": true,
+        "afterAll": true
     }
 }

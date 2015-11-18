@@ -21,11 +21,7 @@ The JWT Authentication is a solution to these problems.
 
 ### Server
 
-## !This section is out of date and does not comply with the spec anymore. Validating JWT tokens will fail.!
-
-* Validate a JWT token
-* Automatically retrieve the public key of the issuer of the token
-* Validate the token expiry
+* TBD
 
 ## API
 
@@ -37,10 +33,10 @@ Refer to the [api documentation](https://bitbucket.org/atlassianlabs/jwt-authent
 
 ```
 var jwtAuthentication = require('jwt-authentication');
-var authenticator = jwtAuthentication.create({publicKeyServer: 'https://public-key-server.com'});
+var generator = jwtAuthentication.client.create();
 var claims = {iss: 'name-of-client', sub: 'name-of-client', aud: 'name-of-server'};
-var options = {privateKey: privateKey, kid: 'name-of-client/key-id'};
-authenticator.generateAuthorizationHeader(claims, options, function (error, headerValue) {
+var options = {privateKey: privateKey, kid: 'name-of-client/key-id.pem'};
+generator.generateAuthorizationHeader(claims, options, function (error, headerValue) {
     if (error) {
         console.log('Generating the token failed.', error);
     } else {
@@ -49,32 +45,6 @@ authenticator.generateAuthorizationHeader(claims, options, function (error, head
     }
 });
 ```
-
-### Server
-
-```
-var jwtAuthentication = require('jwt-authentication');
-var authenticator = jwtAuthentication.create({publicKeyServer: 'https://public-key-server.com'});
-authenticator.validate(token, function (error, claims) {
-    if (error) {
-        console.log('Validating the token failed.', error);
-    } else {
-        console.log('the token claims are', claims);
-    }
-});
-```
-
-## Public Key Server
-
-The tokens are cryptographically signed using [RSA](http://en.wikipedia.org/wiki/RSA_%28cryptosystem%29). This means the token creators need a public and private key pair. Only the token creator should have access to the private key and it should be distributed to these services using a secure mechanism. The public key needs to be accessible to the receiver of the token. This is where the public key server fits into the picture.
-
-The public key server is a third party that token receivers trust. The public keys of token creators are published to this server. When the token receiver receives a token it will look at the `kid` claim of the token, retrieve the key for that issuer from the public key server and use it to validate the token.
-
-For example if the following token is sent:
-`{"alg": "HS256", "typ": "JWT", "kid": "name-of-client/key-id"}.{"iss": "name-of-client", "sub": "name-of-client"}.[signature]`
-
-The token receiver will use the public key found at:
-`https://public-key-server.com/name-of-client/key-id.pem`
 
 ## Creating the public and private key pair
 

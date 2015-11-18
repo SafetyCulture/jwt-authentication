@@ -16,7 +16,7 @@ describe('jwt-authentication/json-web-token', function () {
 
         jsonWebTokenClaims = {};
         jsonWebToken = jasmine.createSpyObj('jsonWebToken', ['decode', 'verify', 'sign']);
-        jsonWebToken.verify.and.callFake(function (jwtToken, publicKey, callback) {
+        jsonWebToken.verify.and.callFake(function (jwtToken, publicKey, options, callback) {
             callback(undefined, jsonWebTokenClaims);
         });
 
@@ -32,17 +32,17 @@ describe('jwt-authentication/json-web-token', function () {
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 {iss: 'issuer', sub: 'subject', jti: jasmine.any(String)},
                 'private-key',
-                {algorithm: 'RS256', expiresInMinutes: 0.5, headers: {kid: 'a-kid'}});
+                {algorithm: 'RS256', expiresIn: 30, headers: {kid: 'a-kid'}});
         });
 
-        it('should allow expiresInMinutes to be set', function () {
+        it('should allow expiresInSeconds to be set', function () {
             var claims = {iss: 'issuer', sub: 'subject'};
-            var options = {expiresInMinutes: 10, privateKey: 'private-key'};
+            var options = {expiresInSeconds: 10, privateKey: 'private-key'};
             jwtPromiseWrapper.create(claims, options);
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 jasmine.any(Object),
                 jasmine.any(String),
-                jasmine.objectContaining({expiresInMinutes: 10})
+                jasmine.objectContaining({expiresIn: 10})
             );
         });
 
@@ -52,7 +52,9 @@ describe('jwt-authentication/json-web-token', function () {
                 {privateKey: 'private-key'}
             );
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
-                {iss: 'issuer', sub: 'subject', jti: jasmine.any(String), claim1: 'foo', claim2: 'bar'},
+                {iss: 'issuer', sub: 'subject', jti: jasmine.any(String),
+                    claim1: 'foo', claim2: 'bar'
+                },
                 jasmine.any(String),
                 jasmine.any(Object));
         });
@@ -118,7 +120,8 @@ describe('jwt-authentication/json-web-token', function () {
         it('should pass through the arguments to jsonWebToken.verify', function () {
             jwtPromiseWrapper.verify('jwt-token', 'public-key');
 
-            expect(jsonWebToken.verify).toHaveBeenCalledWith('jwt-token', 'public-key', jasmine.any(Function));
+            expect(jsonWebToken.verify).toHaveBeenCalledWith('jwt-token', 'public-key',
+                {ignoreExpiration: true}, jasmine.any(Function));
         });
 
         it('should return the claims when the token verification is successful', function (done) {
@@ -131,7 +134,7 @@ describe('jwt-authentication/json-web-token', function () {
         });
 
         it('should return the error when the token verification fails', function (done) {
-            jsonWebToken.verify.and.callFake(function (jwtToken, publicKey, callback) {
+            jsonWebToken.verify.and.callFake(function (jwtToken, publicKey, options, callback) {
                 callback(new Error('an error'));
             });
 

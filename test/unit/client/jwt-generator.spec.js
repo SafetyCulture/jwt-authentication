@@ -1,7 +1,7 @@
 var q = require('q');
-var specHelpers = require('./support/spec-helpers');
+var specHelpers = require('../support/spec-helpers');
 
-describe('jwt-authentication', function () {
+describe('jwt-generator', function () {
     var jsonWebToken;
     var jwtAuthentication;
     var request;
@@ -16,19 +16,14 @@ describe('jwt-authentication', function () {
         request = jasmine.createSpy('request');
         request.and.returnValue(q());
 
-        jwtAuthentication = specHelpers.requireWithMocks('jwt-authentication', {
-            './jwt-authentication/json-web-token': jsonWebToken,
-            './jwt-authentication/request': request
+        jwtAuthentication = specHelpers.requireWithMocks('/client/jwt-generator', {
+            '../jwt-authentication/json-web-token': jsonWebToken
         });
 
         validator = jwtAuthentication.create({
-            publicKeyServer: 'http://a-public-key-server'
+            publicKeyServer: 'http://a-public-key-server',
+            resourceServerAudience: 'an-audience'
         });
-    });
-
-    it('should throw an error if config.publicKeyServer is not set', function() {
-        expect(function () {jwtAuthentication.create({foo: 'bar'});}).toThrow(
-            new Error('Required config value config.publicKeyServer is missing.'));
     });
 
     var itShouldGenerateAToken = function (methodToTestName) {
@@ -41,7 +36,8 @@ describe('jwt-authentication', function () {
             var options = {kid: 'kid', privateKey: 'key'};
             generateToken(claims, options, function () {
                 var expectedClaims = {iss: 'iss', sub: 'sub', aud: 'aud', foo: 'bar'};
-                var expectedOptions = {expiresInMinutes: undefined, kid: 'kid', privateKey: 'key'};
+                var expectedOptions = {expiresInSeconds: undefined, kid: 'kid', privateKey: 'key',
+                    iat: undefined, notBefore: undefined};
                 expect(jsonWebToken.create).toHaveBeenCalledWith(expectedClaims, expectedOptions);
                 done();
             });
@@ -49,10 +45,23 @@ describe('jwt-authentication', function () {
 
         it('should allow the expiry to be set on the token', function (done) {
             var claims = {iss: 'iss', sub: 'sub', aud: 'aud'};
-            var options = {expiresInMinutes: 10, kid:'kid', privateKey: 'key'};
+            var options = {expiresInSeconds: 600, kid:'kid', privateKey: 'key'};
             generateToken(claims, options, function () {
                 var expectedClaims = {iss: 'iss', sub: 'sub', aud: 'aud'};
-                var expectedOptions = {expiresInMinutes: 10, kid: 'kid', privateKey: 'key'};
+                var expectedOptions = {expiresInSeconds: 600, kid: 'kid', privateKey: 'key',
+                    iat: undefined, notBefore: undefined };
+                expect(jsonWebToken.create).toHaveBeenCalledWith(expectedClaims, expectedOptions);
+                done();
+            });
+        });
+
+        it('should allow the not before to be set on the token', function (done) {
+            var claims = {iss: 'iss', sub: 'sub', aud: 'aud'};
+            var options = {notBefore: 600, kid:'kid', privateKey: 'key'};
+            generateToken(claims, options, function () {
+                var expectedClaims = {iss: 'iss', sub: 'sub', aud: 'aud'};
+                var expectedOptions = {expiresInSeconds: undefined, notBefore: 600, kid: 'kid',
+                    privateKey: 'key', iat: undefined};
                 expect(jsonWebToken.create).toHaveBeenCalledWith(expectedClaims, expectedOptions);
                 done();
             });
@@ -165,99 +174,5 @@ describe('jwt-authentication', function () {
         });
 
         itShouldGenerateAToken('generateAuthorizationHeader');
-    });
-
-    describe('validate', function () {
-        it('should pass the given token to decode', function (done) {
-            validator.validate('json-web-token', function () {
-                expect(jsonWebToken.decode).toHaveBeenCalledWith('json-web-token');
-                done();
-            });
-        });
-
-        it('should fetch the public key for the token', function (done) {
-            jsonWebToken.decode.and.returnValue({iss: 'an-issuer'});
-
-            validator.validate('json-web-token', function () {
-                expect(request).toHaveBeenCalledWith('http://a-public-key-server/an-issuer/public.pem');
-                done();
-            });
-        });
-
-        it('should verify the token using fetched public key', function (done) {
-            request.and.returnValue(q('public-key'));
-
-            validator.validate('json-web-token', function () {
-                expect(jsonWebToken.verify).toHaveBeenCalledWith('json-web-token', 'public-key');
-                done();
-            });
-        });
-
-        it('should return the verified claims', function (done) {
-            jsonWebToken.verify.and.returnValue(q({iss: 'an-issuer'}));
-
-            validator.validate('json-web-token', function (error, claims) {
-                expect(error).toBeNull('error');
-                expect(claims).toEqual({iss: 'an-issuer'}, 'claims');
-                done();
-            });
-        });
-
-        it('should return the error when decoding the claims fails', function (done) {
-            jsonWebToken.decode.and.throwError('decode failed');
-
-            validator.validate('json-web-token', function (error, claims) {
-                expect(error).toBeDefined('error');
-                expect(error.message).toBe('decode failed', 'error.message');
-                expect(claims).toBeUndefined('claims');
-                done();
-            });
-        });
-
-        it('should return an error when the claims section has no "iss" field', function (done) {
-            jsonWebToken.decode.and.returnValue({aToken: 'with-no-iss-field'});
-
-            validator.validate('json-web-token', function (error, claims) {
-                expect(error).toBeDefined('error');
-                expect(error.message).toBe('Cannot verify token with no "iss" claim', 'error.message');
-                expect(claims).toBeUndefined('claims');
-                done();
-            });
-        });
-
-        it('should return the error when fetching the public key fails', function (done) {
-            request.and.returnValue(q.reject(new Error('request failed')));
-
-            validator.validate('json-web-token', function (error, claims) {
-                expect(error).toBeDefined('error');
-                expect(error.message).toBe('request failed');
-                expect(claims).toBeUndefined('claims');
-                done();
-            });
-        });
-
-        it('should return the error when verifying the token fails', function (done) {
-            jsonWebToken.verify.and.returnValue(q.reject(new Error('token verification failed')));
-
-            validator.validate('json-web-token', function (error, claims) {
-                expect(error).toBeDefined('error');
-                expect(error.message).toBe('token verification failed');
-                expect(claims).toBeUndefined('claims');
-                done();
-            });
-        });
-
-        //it('should not invoke the callback with errors thrown from the callback', function () {
-        //    var callback = jasmine.createSpy('callback').and.throwError('oh no!');
-        //    validator.validate('json-web-token', callback);
-        //
-        //    waitsFor(function () {
-        //        return callback.callCount > 0;
-        //    });
-        //
-        //    runs(function () {
-        //        expect(callback.callCount).toBe(1);
-        //    });
-        //});
     });
 });

@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-
+    process.env.Q_DEBUG = 1;
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -80,7 +80,7 @@ module.exports = function(grunt) {
         },
         jsdoc2md: {
             api: {
-                src: "lib/*.js",
+                src: "lib/**/*.js",
                 dest: "docs/API.md"
             }
         }
