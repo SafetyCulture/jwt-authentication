@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 
     // Polyfill so we can run without ES6 promises
     if (!global.Promise) {
-        global.Promise = q.Promise;
+        global.Promise = require('q').Promise;
     }
 
     // Project configuration.
