@@ -1,5 +1,13 @@
 module.exports = function(grunt) {
+
+    // Long stack traces for q
     process.env.Q_DEBUG = 1;
+
+    // Polyfill so we can run without ES6 promises
+    if (!global.Promise) {
+        global.Promise = require('q').Promise;
+    }
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
