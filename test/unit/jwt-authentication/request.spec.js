@@ -31,7 +31,7 @@ describe('jwt-authentication/request', function () {
             expect(axios.get).toHaveBeenCalledWith('https://some.url',
                 {
                     headers : { Accept : 'application/x-pem-file' },
-                    timeout: 180000
+                    timeout: 15000
                 }
             );
             done();
