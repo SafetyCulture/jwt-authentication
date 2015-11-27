@@ -54,7 +54,7 @@ describe ('jwt-auth-middlerware', function () {
                     expect(body).toEqual({
                         'errors':[
                             {
-                                'message':'Request to billing service had missing or incorrect credentials.',
+                                'message':'Request had missing or incorrect credentials.',
                                 'originalError':'invalid signature'
                             }
                         ]

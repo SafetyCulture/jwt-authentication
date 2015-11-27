@@ -29,9 +29,9 @@ describe('jwtAuthMiddleware', function() {
         authMiddleware(getRequestWithHeader(), response, next)
             .then(function() {
                 expect(next).not.toHaveBeenCalled();
-                expect(logger.info.argsForCall[0][0].message)
-                    .toBe('Request to billing service had missing or incorrect credentials.');
-                expect(JSON.parse(response.end.argsForCall[0][0]).errors[0].originalError)
+                expect(logger.info.calls.argsFor(0)[0].message)
+                    .toBe('Request had missing or incorrect credentials.');
+                expect(JSON.parse(response.end.calls.argsFor(0)[0]).errors[0].originalError)
                     .toBe('Missing authorization header');
                 expect(response.statusCode).toBe(401);
                 done();
@@ -42,9 +42,9 @@ describe('jwtAuthMiddleware', function() {
         authMiddleware(getRequestWithHeader({authorization: 'wrong-format'}), response, next)
             .then(function() {
                 expect(next).not.toHaveBeenCalled();
-                expect(logger.info.argsForCall[0][0].message)
-                    .toBe('Request to billing service had missing or incorrect credentials.');
-                expect(JSON.parse(response.end.argsForCall[0][0]).errors[0].originalError)
+                expect(logger.info.calls.argsFor(0)[0].message)
+                    .toBe('Request had missing or incorrect credentials.');
+                expect(JSON.parse(response.end.calls.argsFor(0)[0]).errors[0].originalError)
                     .toBe('Authorization header has a wrong format');
                 expect(response.statusCode).toBe(401);
                 done();
@@ -55,9 +55,9 @@ describe('jwtAuthMiddleware', function() {
         authMiddleware(getRequestWithHeader({authorization: 'Base someauth'}), response, next)
             .then(function() {
                 expect(next).not.toHaveBeenCalled();
-                expect(logger.info.argsForCall[0][0].message)
-                    .toBe('Request to billing service had missing or incorrect credentials.');
-                expect(JSON.parse(response.end.argsForCall[0][0]).errors[0].originalError)
+                expect(logger.info.calls.argsFor(0)[0].message)
+                    .toBe('Request had missing or incorrect credentials.');
+                expect(JSON.parse(response.end.calls.argsFor(0)[0]).errors[0].originalError)
                     .toBe('Authorization header has a wrong scheme');
                 expect(response.statusCode).toBe(401);
                 done();
@@ -68,7 +68,7 @@ describe('jwtAuthMiddleware', function() {
         authMiddleware(getRequestWithHeader({authorization: 'Bearer someauth'}), response, next)
             .then(function() {
                 expect(next).toHaveBeenCalled();
-                expect(jwtAuthenticator.validate.argsForCall[0][0]).toBe('someauth');
+                expect(jwtAuthenticator.validate.calls.argsFor(0)[0]).toBe('someauth');
                 done();
             });
     });
@@ -81,9 +81,9 @@ describe('jwtAuthMiddleware', function() {
         authMiddleware(getRequestWithHeader({authorization: 'Bearer someauth'}), response, next)
             .then(function() {
                 expect(next).not.toHaveBeenCalled();
-                expect(logger.info.argsForCall[0][0].message)
-                    .toBe('Request to billing service had missing or incorrect credentials.');
-                expect(JSON.parse(response.end.argsForCall[0][0]).errors[0].originalError)
+                expect(logger.info.calls.argsFor(0)[0].message)
+                    .toBe('Request had missing or incorrect credentials.');
+                expect(JSON.parse(response.end.calls.argsFor(0)[0]).errors[0].originalError)
                     .toBe('Validation failed');
                 expect(response.statusCode).toBe(401);
                 done();
