@@ -11,6 +11,21 @@ module.exports = function(grunt) {
         global.Promise = require('q').Promise;
     }
 
+    var addJWTMiddleware = function(middlewares, validator, validIssuers, basePath) {
+        var jwtMiddleware = jwtAuthenticationMiddleware.create(validator, validIssuers);
+        middlewares.unshift(function(req, res, next) {
+            if (req.url !== basePath) return next();
+            jwtMiddleware(req, res, next);
+        });
+
+        middlewares.push(function(req, res, next) {
+            if (req.url === basePath) {
+                res.end('Ok');
+            }
+            next();
+        });
+    };
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -54,19 +69,8 @@ module.exports = function(grunt) {
                             resourceServerAudience: 'an-audience',
                             publicKeyBaseUrl: 'http://localhost:8000/'
                         });
-                        var jwtMiddleware = jwtAuthenticationMiddleware.create(validator, ['an-issuer']);
-                        middlewares.unshift(function(req, res, next) {
-                            if (req.url !== '/needs/auth') return next();
-                            jwtMiddleware(req, res, next);
-                        });
-
-                        middlewares.push(function(req, res, next) {
-                            if (req.url === '/needs/auth') {
-                                res.end('Ok');
-                            }
-                            next();
-                        });
-
+                        addJWTMiddleware(middlewares, validator, ['an-issuer'], '/needs/auth');
+                        addJWTMiddleware(middlewares, validator, ['different-issuer'], '/different/issuer');
                         return middlewares;
                     }
                 }
