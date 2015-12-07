@@ -39,5 +39,11 @@ interface Server {
     create(config: ValidatorConfig): Validator
 }
 
+interface Middleware {
+    create(jwtValidator: Validator, authorizedSubjects: string[], logger?: any):
+        (request: any, response: any, next: () => void) => void
+}
+
 export var client: Client;
 export var server: Server;
+export var middleware: Middleware;
