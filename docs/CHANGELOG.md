@@ -1,3 +1,17 @@
+<a name"0.1.0"></a>
+## 0.1.0 (2015-12-18)
+
+
+#### Features
+
+* Add TypeScript definition.
+* Add JWT auth middleware for HTTP server libraries.
+
+#### Bug Fixes
+
+* Implement correct JWT validation logic.
+
+
 <a name"0.0.6"></a>
 ### 0.0.6 (2015-04-21)
 
