@@ -47,7 +47,7 @@ describe('jwtValidator', function() {
     });
 
     it('should fail if the jwt token cannot be parsed', function(done) {
-        jsonWebToken.decode.and.throwError('Token could not pe parsed');
+        jsonWebToken.decode.and.returnValue(null);
         validator.validate('invalid token', ['issuer1'], function(error) {
             expect(error).toBeDefined();
             expect(error.message).toBe('Token could not pe parsed');
