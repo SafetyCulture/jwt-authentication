@@ -128,7 +128,7 @@ This library uses [JSDoc](http://usejsdoc.org/) to document it's public api. If 
 
 ### Changelog
 
-This library automatically generates the changelog from the commit messages. To facilitate this please follow [these conventions](https://github.com/ajoslin/conventional-changelog/blob/master/CONVENTIONS.md) in your commit messages.
+This library automatically generates the changelog from the commit messages. To facilitate this please follow [these conventions](https://github.com/ajoslin/conventional-changelog/blob/master/conventions/eslint.md) in your commit messages.
 
 ### Releasing
 
