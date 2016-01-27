@@ -1,3 +1,12 @@
+<a name"0.1.1"></a>
+### 0.1.1 (2016-01-27)
+
+
+#### Bug Fixes
+
+* prevent jwt-validator.validate() from throwing an exception on invalid token ([1a8d7596](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/1a8d7596464729af0980c1a48222f26bb517d4d5))
+
+
 <a name"0.1.0"></a>
 ## 0.1.0 (2015-12-18)
 
