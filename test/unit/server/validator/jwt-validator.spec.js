@@ -50,7 +50,7 @@ describe('jwtValidator', function() {
         jsonWebToken.decode.and.returnValue(null);
         validator.validate('invalid token', ['issuer1'], function(error) {
             expect(error).toBeDefined();
-            expect(error.message).toBe('Token could not pe parsed');
+            expect(error.message).toBe('Token could not be parsed');
             done();
         });
     });
