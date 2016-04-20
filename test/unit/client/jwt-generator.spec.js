@@ -157,19 +157,17 @@ describe('jwt-generator', function () {
             });
         });
 
-        it('should invoke the callback synchronously and exactly once', function() {
+        it('should invoke the callback exactly once', function() {
             var claims = {iss: 'iss', sub: 'sub', aud: 'aud'};
-            var options = {kid:'kid', privateKey: 'key'};
+            var options = {kid: 'kid', privateKey: 'key'};
 
-            var times = 0;
+            var callback = jasmine.createSpy('callback').and.throwError(new Error('expected error'));
+            var invokeGenerateToken = function () {
+                validator.generateToken(claims, options, callback);
+            };
 
-            expect(function() {
-                validator.generateToken(claims, options, function () {
-                    times += 1;
-                    expect(times).toBe(1);
-                    throw new Error('expected error');
-                });
-            }).toThrow(new Error('expected error'));
+            expect(invokeGenerateToken).toThrow(new Error('expected error'));
+            expect(callback.calls.count()).toBe(1);
         });
 
         itShouldGenerateAToken('generateToken');
