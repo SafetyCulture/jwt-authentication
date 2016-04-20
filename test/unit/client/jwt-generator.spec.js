@@ -157,6 +157,21 @@ describe('jwt-generator', function () {
             });
         });
 
+        it('should invoke the callback synchronously and exactly once', function() {
+            var claims = {iss: 'iss', sub: 'sub', aud: 'aud'};
+            var options = {kid:'kid', privateKey: 'key'};
+
+            var times = 0;
+
+            expect(function() {
+                validator.generateToken(claims, options, function (error, token) {
+                    times++;
+                    expect(times).toBe(1);
+                    throw new Error('expected error');
+                });
+            }).toThrow(new Error('expected error'));
+        });
+
         itShouldGenerateAToken('generateToken');
     });
 
