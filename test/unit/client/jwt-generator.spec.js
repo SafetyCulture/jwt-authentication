@@ -164,8 +164,8 @@ describe('jwt-generator', function () {
             var times = 0;
 
             expect(function() {
-                validator.generateToken(claims, options, function (error, token) {
-                    times++;
+                validator.generateToken(claims, options, function () {
+                    times += 1;
                     expect(times).toBe(1);
                     throw new Error('expected error');
                 });
