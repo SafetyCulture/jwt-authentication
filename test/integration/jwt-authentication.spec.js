@@ -53,6 +53,28 @@ describe ('jwt-authentication', function () {
             });
         });
 
+        it('should create a correctly signed jwt token with audience as an array', function (done) {
+            var claims = {
+                iss: 'an-issuer',
+                sub: 'a-subject',
+                aud: ['an-audience', 'another-audience'],
+                foo: 'abc',
+                bar: 123
+            };
+            var options = {kid: 'path/to/publicKey', privateKey: privateKey};
+            generateToken(claims, options, function (error, token) {
+                expect(error).toBeNull('error');
+
+                var actualClaims = validateJwtToken(token, 'public');
+                expect(actualClaims.iss).toEqual('an-issuer');
+                expect(actualClaims.sub).toEqual('a-subject');
+                expect(actualClaims.aud).toEqual(['an-audience', 'another-audience']);
+                expect(actualClaims.foo).toEqual('abc');
+                expect(actualClaims.bar).toEqual(123);
+                done();
+            });
+        });
+
         it('should contain the kid header in the token', function (done) {
             var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience', foo: 'abc', bar: 123};
             var options = {kid: 'path/to/publicKey', privateKey: privateKey};

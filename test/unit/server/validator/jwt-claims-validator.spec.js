@@ -13,6 +13,16 @@ var VALID_JWT_CLAIMS = {
     'nbf': NOW
 };
 
+var VALID_JWT_CLAIMS_WITH_AUD_ARR = {
+    'iss': 'an-issuer',
+    'sub': 'an-issuer',
+    'aud': ['an-audience', 'another-audience'],
+    'jti': '1a880a9a38ab4890044a7b8f06baefca34bbf6e3',
+    'iat': NOW,
+    'exp': NOW + 30,
+    'nbf': NOW
+};
+
 var VALID_JWT_HEADER = {
     kid: 'an-issuer/key.pem'
 };
@@ -76,6 +86,18 @@ describe('jwtClaimsValidator', function () {
     it('should reject jwt if the audience is invalid', function(done) {
         var invalidToken = _.clone(VALID_JWT_CLAIMS);
         invalidToken.aud = 'invalid-audience';
+        validator.validate([VALID_ISSUER], VALID_AUD, VALID_JWT_HEADER, invalidToken)
+            .then(failTest(done))
+            .fail(function(error) {
+                expect(error).toBeDefined();
+                expect(error.message).toBe('Unrecognised audience');
+                done();
+            });
+    });
+
+    it('should reject jwt if the audience array is invalid', function(done) {
+        var invalidToken = _.clone(VALID_JWT_CLAIMS_WITH_AUD_ARR);
+        invalidToken.aud = ['invalid-audience-1', 'invalid-audience-1'];
         validator.validate([VALID_ISSUER], VALID_AUD, VALID_JWT_HEADER, invalidToken)
             .then(failTest(done))
             .fail(function(error) {
@@ -189,6 +211,15 @@ describe('jwtClaimsValidator', function () {
 
     it('should accept a valid jwt token', function(done) {
         validator.validate([VALID_ISSUER], VALID_AUD, VALID_JWT_HEADER, VALID_JWT_CLAIMS)
+            .then(function(claims) {
+                expect(claims).toBeDefined();
+                done();
+            })
+            .fail(failTest(done));
+    });
+
+    it('should accept a valid jwt token with an audience array in claims', function(done) {
+        validator.validate([VALID_ISSUER], VALID_AUD, VALID_JWT_HEADER, VALID_JWT_CLAIMS_WITH_AUD_ARR)
             .then(function(claims) {
                 expect(claims).toBeDefined();
                 done();
