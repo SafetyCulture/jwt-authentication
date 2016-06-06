@@ -43,6 +43,21 @@ describe ('jwt-auth-middlerware', function () {
         });
     });
 
+    it('should authenticate valid token with audience array', function (done) {
+        var claims = {iss: 'an-issuer', sub: 'an-issuer', aud: ['an-audience', 'another-audience']};
+        var options = {kid: 'an-issuer/public.pem', privateKey: privateKey};
+        invokeGenerateToken(claims, options, function (error, headerValue) {
+            requestWithAuthHeader(headerValue)
+                .then(function(responseAndBody) {
+                    var response = responseAndBody[0];
+                    var body = responseAndBody[1];
+                    expect(body).toBe('Ok');
+                    expect(response.statusCode).toBe(200);
+                    done();
+                }).fail(failTest(done));
+        });
+    });
+
     it('should return 401, if the token is invalid', function (done) {
         var claims = {iss: 'an-issuer', sub: 'an-issuer', aud: 'an-audience'};
         var options = {kid: 'an-issuer/public.pem', privateKey: incorrectPrivateKey};

@@ -43,6 +43,18 @@ describe('jwt-generator', function () {
             });
         });
 
+        it('should create a jwt token with audience as an array', function (done) {
+            var claims = {iss: 'iss', sub: 'sub', aud: ['aud1', 'aud2'], foo: 'bar'};
+            var options = {kid: 'kid', privateKey: 'key'};
+            generateToken(claims, options, function () {
+                var expectedClaims = {iss: 'iss', sub: 'sub', aud: ['aud1', 'aud2'], foo: 'bar'};
+                var expectedOptions = {expiresInSeconds: undefined, kid: 'kid', privateKey: 'key',
+                    iat: undefined, notBefore: undefined};
+                expect(jsonWebToken.create).toHaveBeenCalledWith(expectedClaims, expectedOptions);
+                done();
+            });
+        });
+
         it('should allow the expiry to be set on the token', function (done) {
             var claims = {iss: 'iss', sub: 'sub', aud: 'aud'};
             var options = {expiresInSeconds: 600, kid:'kid', privateKey: 'key'};
