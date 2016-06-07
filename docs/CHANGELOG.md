@@ -1,3 +1,12 @@
+<a name"0.2.0"></a>
+## 0.2.0 (2016-06-07)
+
+
+#### Features
+
+* Support an array of strings as an audience along with a single string value ([f2e54b1e](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/f2e54b1ead7340154b7be53c4dba6a6f17457552))
+
+
 <a name"0.1.1"></a>
 ### 0.1.1 (2016-01-27)
 

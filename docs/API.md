@@ -113,7 +113,8 @@ Generates a jwt token.
 This name should match the name of a key in the `publicKeyServer`.  
   - sub `String` - Subject. The name of the system the token is for.
 If the subject is generating tokens for itself the `sub` and `iss` should be the same.  
-  - aud `String` - Audience. The value that identifies the resource server.  
+  - aud `String` - Audience. The value that identifies the resource server. This can
+also be an array of strings when the token is intended for multiple resource servers.  
 - options `Object`  
   - privateKey `String` - The private key to use when generating the token.  
   - kid `String` - Key ID. The identifier of the key used to sign the token in the format
@@ -147,7 +148,8 @@ The format of the value is `Bearer [token]`.
 This name should match the name of a key in the `publicKeyServer`.  
   - sub `String` - Subject. The name of the system the token is for.
 If the subject is generating tokens for itself the `sub` and `iss` should be the same.  
-  - aud `String` - Audience. The value that identifies the resource server.  
+  - aud `String` - Audience. The value that identifies the resource server. This can also
+be an array of strings when the token is intended for multiple resource servers.  
 - options `Object`  
   - privateKey `String` - The private key to use when generating the token.  
   - kid `String` - Key ID. The identifier of the key used to sign the token in the format
