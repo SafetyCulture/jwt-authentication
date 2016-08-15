@@ -244,6 +244,16 @@ describe ('jwt-authentication', function () {
     });
 
     describe('validate', function () {
+
+        beforeEach(function() {
+            jasmine.clock().install();
+            jasmine.clock().mockDate(new Date(2016, 1, 1));
+        });
+
+        afterEach(function() {
+            jasmine.clock().uninstall();
+        });
+
         var createJwtToken = function (privateKeyName, payload) {
             var deferred = q.defer();
             var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/' + privateKeyName + '.pem');
@@ -304,7 +314,7 @@ describe ('jwt-authentication', function () {
 
         it('should return an error when the token is expired', function (done) {
             var issuedAt = Math.floor(Date.now() / 1000) - 100;
-            createJwtToken('private', {iat: issuedAt, expiresInSeconds: -60}).then(function(jwtToken) {
+            createJwtToken('private', {iat: issuedAt, expiresInSeconds: -31}).then(function(jwtToken) {
                 createValidator().validate(jwtToken,['an-issuer'], function (error, claims) {
                     expect(claims).toBeUndefined('claims');
                     expect(error).toBeDefined('error');
@@ -313,6 +323,41 @@ describe ('jwt-authentication', function () {
                 });
             });
         });
+
+        it('should allow 30 seconds leeway when the token is expired', function (done) {
+            var issuedAt = Math.floor(Date.now() / 1000) - 100;
+            createJwtToken('private', {iat: issuedAt, expiresInSeconds: -30}).then(function(jwtToken) {
+                createValidator().validate(jwtToken,['an-issuer'], function (error, claims) {
+                    expect(claims).toEqual(jasmine.objectContaining({iss: 'an-issuer'}));
+                    expect(error).toBe(null);
+                    done();
+                });
+            });
+        });
+
+        it('should return an error when the token was created in the future', function (done) {
+            var notBefore = Math.floor(Date.now() / 1000) + 31;
+            createJwtToken('private', {notBefore: notBefore, expiresInSeconds: 60}).then(function(jwtToken) {
+                createValidator().validate(jwtToken,['an-issuer'], function (error, claims) {
+                    expect(claims).toBeUndefined();
+                    expect(error).toBeDefined();
+                    expect(error.message).toBe('The token is not valid yet');
+                    done();
+                });
+            });
+        });
+
+        it('should allow 30 seconds leeway when the token was created in the future', function (done) {
+            var notBefore = Math.floor(Date.now() / 1000) + 30;
+            createJwtToken('private', {notBefore: notBefore, expiresInSeconds: 60}).then(function(jwtToken) {
+                createValidator().validate(jwtToken,['an-issuer'], function (error, claims) {
+                    expect(claims).toEqual(jasmine.objectContaining({iss: 'an-issuer'}));
+                    expect(error).toBe(null);
+                    done();
+                });
+            });
+        });
+
         describe('keyCaching', function() {
             var httpSpy;
 
