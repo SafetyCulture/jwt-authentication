@@ -1,3 +1,13 @@
+<a name"0.2.1"></a>
+### 0.2.1 (2016-08-16)
+
+
+#### Bug Fixes
+
+* **json-web-token:** Check the nbf ourself, with tests ([01a311a5](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/01a311a56d6b73dd13bf84c034e30441b83ab727))
+* **jwt-claims-validator:** Allow configurable leeway ([202624a0](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/202624a0fbcb7bf357b5de1b33fbc89c97e2d067))
+
+
 <a name"0.2.0"></a>
 ## 0.2.0 (2016-06-07)
 
