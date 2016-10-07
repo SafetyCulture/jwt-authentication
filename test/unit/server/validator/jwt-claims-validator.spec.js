@@ -57,19 +57,6 @@ describe('jwtClaimsValidator', function () {
 
     });
 
-    it('should reject jwt if issuer does not match subject', function(done) {
-        var invalidToken = _.clone(VALID_JWT_CLAIMS);
-        invalidToken.sub = 'different-subject';
-        validator.validate([VALID_ISSUER], VALID_AUD, VALID_JWT_HEADER, invalidToken)
-            .then(failTest(done))
-            .fail(function(error) {
-                expect(error).toBeDefined();
-                expect(error.message).toBe('If defined, subject must be the same as issuer');
-                done();
-            });
-
-    });
-
     it('should reject jwt if subject is not authorised by the valid issuers list', function(done) {
         var invalidToken = _.clone(VALID_JWT_CLAIMS);
         invalidToken.iss = 'different-issuer';
@@ -139,18 +126,6 @@ describe('jwtClaimsValidator', function () {
             .fail(function(error) {
                 expect(error).toBeDefined();
                 expect(error.message).toBe('The expiry time must be after the not-before time');
-                done();
-            });
-    });
-
-    it('should reject jwt if lifetime exceeds one hour', function(done) {
-        var invalidToken = _.clone(VALID_JWT_CLAIMS);
-        invalidToken.exp = VALID_JWT_CLAIMS.exp + 2 * 60 * 60;
-        validator.validate([VALID_ISSUER], VALID_AUD, VALID_JWT_HEADER, invalidToken)
-            .then(failTest(done))
-            .fail(function(error) {
-                expect(error).toBeDefined();
-                expect(error.message).toBe('Token exceeds lifetime limit of 3600 seconds');
                 done();
             });
     });
