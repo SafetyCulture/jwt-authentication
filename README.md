@@ -54,7 +54,8 @@ generator.generateAuthorizationHeader(claims, options, function (error, headerVa
 var jwtAuthentication = require('jwt-authentication');
 var authenticator = jwtAuthentication.server.create({
         publicKeyServer: 'https://public-key-server.com',
-        resourceServerAudience: 'my-service'
+        resourceServerAudience: 'my-service',
+        ignoreMaxLifeTime: true // Setting this property will skip the 1 hour max lifetime checks and make your server less secure. Do not include this if you are not sure what you are doing.
     });
 var authorizedSubjects = ['an-issuer'];
 authenticator.validate(token, authorizedSubjects, function (error, claims) {
