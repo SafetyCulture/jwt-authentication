@@ -32,7 +32,8 @@ describe('jwtValidator', function() {
         });
         validator = validatorFactory.create({
             publicKeyBaseUrl: 'http://server.com',
-            resourceServerAudience: 'a-service-audience'
+            resourceServerAudience: 'a-service-audience',
+            ignoreMaxLifeTime: false
         });
     });
 
@@ -131,7 +132,8 @@ describe('jwtValidator', function() {
         jsonWebToken.verify.and.returnValue(q.resolve({iss: 'default-issuer'}));
         validator.validate('valid token', ['issuer1'], function() {
             expect(claimsValidator.validate.calls.argsFor(0)[0][0]).toBe('issuer1');
-            expect(claimsValidator.validate.calls.argsFor(0)[1]).toBe('a-service-audience');
+            expect(claimsValidator.validate.calls.argsFor(0)[1].resourceServerAudience).toBe('a-service-audience');
+            expect(claimsValidator.validate.calls.argsFor(0)[1].ignoreMaxLifeTime).toBe(false);
             expect(claimsValidator.validate.calls.argsFor(0)[2].kid).toBe('default-issuer/key.pem');
             expect(claimsValidator.validate.calls.argsFor(0)[3].iss).toBe('default-issuer');
             done();
