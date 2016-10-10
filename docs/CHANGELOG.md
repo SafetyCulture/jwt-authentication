@@ -1,3 +1,69 @@
+<a name"0.3.0"></a>
+## 0.3.0 (2016-10-10)
+
+
+#### Bug Fixes
+
+* update readme and js docs ([54a34ffe](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/54a34ffea68df757443d44ba5e09f7361677d980))
+* ignore max lifetime validation based on a config flag ([2e0dacaf](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/2e0dacaf147c74bc55ca66cfe67c1528fa5d85ee))
+* Remove claim validations which are not a part of the ASAP specs. The library was ([5ba72483](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/5ba72483e02d78163ab2f24f899e21759e29188f))
+
+
+<a name"0.2.1"></a>
+### 0.2.1 (2016-10-10)
+
+
+#### Bug Fixes
+
+* update readme and js docs ([54a34ffe](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/54a34ffea68df757443d44ba5e09f7361677d980))
+* ignore max lifetime validation based on a config flag ([2e0dacaf](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/2e0dacaf147c74bc55ca66cfe67c1528fa5d85ee))
+* Remove claim validations which are not a part of the ASAP specs. The library was ([5ba72483](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/5ba72483e02d78163ab2f24f899e21759e29188f))
+
+
+<a name"0.2.1"></a>
+### 0.2.1 (2016-10-10)
+
+
+#### Bug Fixes
+
+* update readme and js docs ([54a34ffe](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/54a34ffea68df757443d44ba5e09f7361677d980))
+* ignore max lifetime validation based on a config flag ([2e0dacaf](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/2e0dacaf147c74bc55ca66cfe67c1528fa5d85ee))
+* Remove claim validations which are not a part of the ASAP specs. The library was ([5ba72483](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/5ba72483e02d78163ab2f24f899e21759e29188f))
+
+
+<a name"0.2.1"></a>
+### 0.2.1 (2016-10-10)
+
+
+#### Bug Fixes
+
+* update readme and js docs ([54a34ffe](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/54a34ffea68df757443d44ba5e09f7361677d980))
+* ignore max lifetime validation based on a config flag ([2e0dacaf](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/2e0dacaf147c74bc55ca66cfe67c1528fa5d85ee))
+* Remove claim validations which are not a part of the ASAP specs. The library was ([5ba72483](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/5ba72483e02d78163ab2f24f899e21759e29188f))
+
+
+<a name"0.2.1"></a>
+### 0.2.1 (2016-10-10)
+
+
+#### Bug Fixes
+
+* update readme and js docs ([54a34ffe](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/54a34ffea68df757443d44ba5e09f7361677d980))
+* ignore max lifetime validation based on a config flag ([2e0dacaf](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/2e0dacaf147c74bc55ca66cfe67c1528fa5d85ee))
+* Remove claim validations which are not a part of the ASAP specs. The library was ([5ba72483](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/5ba72483e02d78163ab2f24f899e21759e29188f))
+
+
+<a name"0.2.1"></a>
+### 0.2.1 (2016-10-10)
+
+
+#### Bug Fixes
+
+* update readme and js docs ([54a34ffe](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/54a34ffea68df757443d44ba5e09f7361677d980))
+* ignore max lifetime validation based on a config flag ([2e0dacaf](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/2e0dacaf147c74bc55ca66cfe67c1528fa5d85ee))
+* Remove claim validations which are not a part of the ASAP specs. The library was ([5ba72483](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/5ba72483e02d78163ab2f24f899e21759e29188f))
+
+
 <a name"0.2.1"></a>
 ### 0.2.1 (2016-08-16)
 

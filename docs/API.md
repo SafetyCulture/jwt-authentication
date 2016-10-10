@@ -83,6 +83,8 @@ Constructor of `Validator` objects.
 - config `Object`  
   - publicKeyBaseUrl `String` - A base url for the server containing the public keys of the issuers of the tokens. Must end with a slash  
   - resourceServerAudience `String` - all JWT messages will need to have this audience to be valid  
+  - ignoreMaxLifeTime `boolean` - Setting this property will skip the 1 hour max lifetime checks 
+and make your server less secure. Do not include this if you are not sure what you are doing.  
 
 **Returns**: [Validator](#Validator)  
 **Example**  
