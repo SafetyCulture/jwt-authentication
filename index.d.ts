@@ -23,8 +23,9 @@ interface Client {
 }
 
 interface ValidatorConfig {
-    publicKeyBaseUrl: string,
-    resourceServerAudience: string
+    publicKeyBaseUrl: string;
+    resourceServerAudience: string;
+    ignoreMaxLifeTime?: boolean;
 }
 
 interface Validator {
