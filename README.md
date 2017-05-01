@@ -36,8 +36,18 @@ Refer to the [api documentation](https://bitbucket.org/atlassianlabs/jwt-authent
 ```
 var jwtAuthentication = require('jwt-authentication');
 var generator = jwtAuthentication.client.create();
-var claims = {iss: 'name-of-client', sub: 'name-of-client', aud: 'name-of-server'};
-var options = {privateKey: privateKey, kid: 'name-of-client/key-id.pem'};
+
+var claims = {
+    iss: process.env.ASAP_ISSUER,
+    sub: 'name-of-client',
+    aud: 'name-of-server'
+};
+
+var options = {
+    privateKey: process.env.ASAP_PRIVATE_KEY,
+    kid: process.env.ASAP_KEY_ID
+};
+
 generator.generateAuthorizationHeader(claims, options, function (error, headerValue) {
     if (error) {
         console.log('Generating the token failed.', error);
@@ -52,12 +62,15 @@ generator.generateAuthorizationHeader(claims, options, function (error, headerVa
 
 ```
 var jwtAuthentication = require('jwt-authentication');
+
 var authenticator = jwtAuthentication.server.create({
-        publicKeyServer: 'https://public-key-server.com',
-        resourceServerAudience: 'my-service',
-        ignoreMaxLifeTime: true // Setting this property will skip the 1 hour max lifetime checks and make your server less secure. Do not include this if you are not sure what you are doing.
-    });
+    publicKeyServer: process.env.ASAP_PUBLIC_KEY_REPOSITORY_URL,
+    resourceServerAudience: process.env.ASAP_AUDIENCE,
+    ignoreMaxLifeTime: false // Setting this property to true will skip the 1 hour max lifetime checks and make your server less secure. Do not include this if you are not sure what you are doing.
+});
+
 var authorizedSubjects = ['an-issuer'];
+
 authenticator.validate(token, authorizedSubjects, function (error, claims) {
     if (error) {
         console.log('Validating the token failed.', error);

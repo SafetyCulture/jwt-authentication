@@ -7,6 +7,7 @@ var failTest = require('../unit/support/fail-test');
 describe ('jwt-auth-middlerware', function () {
 
     var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
+    var privateKeyDataUri = fs.readFileSync('test/integration/key-server/an-issuer/private-datauri');
     var incorrectPrivateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
 
     var createGenerator = function () {
@@ -31,6 +32,21 @@ describe ('jwt-auth-middlerware', function () {
     it('should authenticate valid token', function (done) {
         var claims = {iss: 'an-issuer', sub: 'an-issuer', aud: 'an-audience'};
         var options = {kid: 'an-issuer/public.pem', privateKey: privateKey};
+        invokeGenerateToken(claims, options, function (error, headerValue) {
+            requestWithAuthHeader(headerValue)
+                .then(function(responseAndBody) {
+                    var response = responseAndBody[0];
+                    var body = responseAndBody[1];
+                    expect(body).toBe('Ok');
+                    expect(response.statusCode).toBe(200);
+                    done();
+                }).fail(failTest(done));
+        });
+    });
+
+    it('should authenticate valid token generated from dataUri', function (done) {
+        var claims = {iss: 'an-issuer', sub: 'an-issuer', aud: 'an-audience'};
+        var options = {kid: 'an-issuer/public.pem', privateKey: privateKeyDataUri};
         invokeGenerateToken(claims, options, function (error, headerValue) {
             requestWithAuthHeader(headerValue)
                 .then(function(responseAndBody) {
