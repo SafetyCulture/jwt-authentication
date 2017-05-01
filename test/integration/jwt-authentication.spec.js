@@ -9,6 +9,7 @@ var jasmineHttpServerSpy = require('jasmine-http-server-spy');
 describe ('jwt-authentication', function () {
 
     var privateKey = fs.readFileSync('test/integration/key-server/an-issuer/private.pem');
+    var privateKeyDataUri = fs.readFileSync('test/integration/key-server/an-issuer/private-datauri');
     var incorrectPrivateKey = fs.readFileSync('test/integration/key-server/an-issuer/private-wrong.pem');
 
     var createGenerator = function () {
@@ -40,6 +41,22 @@ describe ('jwt-authentication', function () {
         it('should create a correctly signed jwt token', function (done) {
             var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience', foo: 'abc', bar: 123};
             var options = {kid: 'path/to/publicKey', privateKey: privateKey};
+            generateToken(claims, options, function (error, token) {
+                expect(error).toBeNull('error');
+
+                var actualClaims = validateJwtToken(token, 'public');
+                expect(actualClaims.iss).toBe('an-issuer');
+                expect(actualClaims.sub).toBe('a-subject');
+                expect(actualClaims.aud).toBe('an-audience');
+                expect(actualClaims.foo).toBe('abc');
+                expect(actualClaims.bar).toBe(123);
+                done();
+            });
+        });
+
+        it('should create a correctly signed jwt token with data-uri private key', function (done) {
+            var claims = {iss: 'an-issuer', sub: 'a-subject', aud: 'an-audience', foo: 'abc', bar: 123};
+            var options = {kid: 'an-issuer/public.pem', privateKey: privateKeyDataUri};
             generateToken(claims, options, function (error, token) {
                 expect(error).toBeNull('error');
 
