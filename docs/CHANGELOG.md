@@ -1,3 +1,14 @@
+<a name"0.3.1"></a>
+### 0.3.1 (2017-05-02)
+
+
+#### Features
+
+* add integration tests ([d4c8a905](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/d4c8a905ef1ae8488100db4d3f276bed718ed352))
+* throw error for malformed data uri ([705e1d52](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/705e1d52d8831120d8d1f9378130a8e0dc1fd3ea))
+* convert privateKey data uris ([a422b991](https://bitbucket.org/atlassianlabs/jwt-authentication/commits/a422b9912ecf402f31e6dc421d69ec7851a29552))
+
+
 <a name"0.3.0"></a>
 ## 0.3.0 (2016-10-10)
 
