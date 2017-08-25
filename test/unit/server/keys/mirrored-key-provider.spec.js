@@ -39,7 +39,7 @@ describe('mirroredKeyProvider', function() {
             return q.delay('Key 1', 10);
         });
         mirror2.getKey.and.callFake(function() {
-            return q.reject('Failed to get the key');
+            return q.reject(new Error('Failed to get the key'));
         });
         mirroredKeyProvider = MirroredKeyProviderFactory.create([mirror1, mirror2]);
         mirroredKeyProvider.getKey().then(function(key) {
@@ -53,10 +53,10 @@ describe('mirroredKeyProvider', function() {
 
     it('should throw an error, if both mirrors fail', function(done) {
         mirror1.getKey.and.callFake(function() {
-            return q.reject('Failed to get the key');
+            return q.reject(new Error('Failed to get the key'));
         });
         mirror2.getKey.and.callFake(function() {
-            return q.reject('Failed to get the key');
+            return q.reject(new Error('Failed to get the key'));
         });
         mirroredKeyProvider = MirroredKeyProviderFactory.create([mirror1, mirror2]);
         mirroredKeyProvider.getKey()
