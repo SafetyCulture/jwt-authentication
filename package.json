@@ -1,6 +1,6 @@
 {
   "name": "jwt-authentication",
-  "version": "0.3.1",
+  "version": "0.3.3",
   "description": "Library that is used to create and verify json web tokens for service to service authentication purposes.",
   "main": "index.js",
   "scripts": {
@@ -46,6 +46,7 @@
     "axios": "^0.15.3",
     "crypto": "0.0.3",
     "ducktype": "^1.1.0",
+    "jsdoc": "^3.5.4",
     "jsonwebtoken": "^5.0.0",
     "lodash": "^3.0.0",
     "node-cache": "^3.0.0",
