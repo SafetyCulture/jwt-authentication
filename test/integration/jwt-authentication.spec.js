@@ -310,7 +310,7 @@ describe ('jwt-authentication', function () {
                         expect(claims).toBeUndefined('claims');
                         expect(error).toBeDefined('error');
                         expect(error.message).toBe('Unable to retrieve public key. ' +
-                            'Error: "Cannot GET /does-not-exist/an-issuer/public.pem" ' +
+                            'Error: "Request failed with status code 404" ' +
                             'Url: "http://localhost:8000/does-not-exist/an-issuer/public.pem"');
                         done();
                     });
