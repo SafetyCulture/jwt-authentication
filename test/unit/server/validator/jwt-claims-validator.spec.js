@@ -233,6 +233,15 @@ describe('jwtClaimsValidator', function () {
             .fail(failTest(done));
     });
 
+    it('should accept a valid jwt token with no authoirized subjects array', function(done) {
+        validator.validate(null, VALID_CONFIG, VALID_JWT_HEADER, VALID_JWT_CLAIMS)
+            .then(function(claims) {
+                expect(claims).toBeDefined();
+                done();
+            })
+            .fail(failTest(done));
+    });
+
     it('should accept a valid jwt token with an audience array in claims', function(done) {
         validator.validate([VALID_ISSUER], VALID_CONFIG, VALID_JWT_HEADER, VALID_JWT_CLAIMS_WITH_AUD_ARR)
             .then(function(claims) {
