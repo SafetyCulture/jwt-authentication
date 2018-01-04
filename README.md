@@ -1,6 +1,5 @@
-# JWT Authentication
-
-[![Build Status](https://drone.io/bitbucket.org/atlassianlabs/jwt-authentication/status.png)](https://drone.io/bitbucket.org/atlassianlabs/jwt-authentication/latest)
+# JWT Authentication [![Build Status](https://travis-ci.org/SafetyCulture/jwt-authentication.svg?branch=master)](https://travis-ci.org/SafetyCulture/jwt-authentication)
+For of http://bitbucket.org/atlassianlabs/jwt-authentication
 
 > A library to create and verify json web tokens for service to service authentication purposes.
 
