@@ -233,7 +233,7 @@ describe('jwtClaimsValidator', function () {
             .fail(failTest(done));
     });
 
-    it('should accept a valid jwt token with no authoirized subjects array', function(done) {
+    it('should accept a valid jwt token with no authorized subjects array', function(done) {
         validator.validate(null, VALID_CONFIG, VALID_JWT_HEADER, VALID_JWT_CLAIMS)
             .then(function(claims) {
                 expect(claims).toBeDefined();
