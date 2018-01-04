@@ -1,5 +1,5 @@
 {
-  "name": "jwt-authentication",
+  "name": "@safetyculture/jwt-authentication",
   "version": "0.3.3",
   "description": "Library that is used to create and verify json web tokens for service to service authentication purposes.",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/atlassianlabs/jwt-authentication"
+    "url": "https://github.com/SafetyCulture/jwt-authentication"
   },
   "contributors": [
     {
