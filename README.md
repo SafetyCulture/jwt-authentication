@@ -1,5 +1,4 @@
 # JWT Authentication [![Build Status](https://travis-ci.org/SafetyCulture/jwt-authentication.svg?branch=master)](https://travis-ci.org/SafetyCulture/jwt-authentication)
-For of http://bitbucket.org/atlassianlabs/jwt-authentication
 
 > A library to create and verify json web tokens for service to service authentication purposes.
 
@@ -30,9 +29,9 @@ Refer to the [api documentation](https://bitbucket.org/atlassianlabs/jwt-authent
 
 ## Example
 
-### Client
+### Client Implementation
 
-```
+```javascript
 var jwtAuthentication = require('jwt-authentication');
 var generator = jwtAuthentication.client.create();
 
@@ -57,9 +56,9 @@ generator.generateAuthorizationHeader(claims, options, function (error, headerVa
 });
 ```
 
-### Server
+### Server Implementation
 
-```
+```javascript
 var jwtAuthentication = require('jwt-authentication');
 
 var authenticator = jwtAuthentication.server.create({
@@ -96,7 +95,7 @@ The token receiver will use the public key found at:
 
 ### Private Key
 
-```
+```cli
 openssl genrsa -out private.pem 2048
 ```
 
@@ -104,7 +103,7 @@ This command will generate a private key. This private key must be kept secret, 
 
 ### Public Key
 
-```
+```cli
 openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 ```
 
@@ -139,7 +138,7 @@ Refer to the [changelog](https://bitbucket.org/atlassianlabs/jwt-authentication/
 
 This library uses [JSDoc](http://usejsdoc.org/) to document it's public api. If you are making changes to the api please update the JSDoc accordingly.
 
-### Changelog
+### Changelog Conventions
 
 This library automatically generates the changelog from the commit messages. To facilitate this please follow [these conventions](https://github.com/bcoe/conventional-changelog-standard/blob/master/convention.md) in your commit messages.
 
