@@ -83,7 +83,7 @@ authenticator.validate(token, authorizedSubjects, function (error, claims) {
 The tokens are cryptographically signed using [RSA](http://en.wikipedia.org/wiki/RSA_%28cryptosystem%29). This means the token creators need a public and private key pair. Only the token creator should have access to the private key and it should be distributed to these services using a secure mechanism. The public key needs to be accessible to the receiver of the token. This is where the public key server fits into the picture.
 
 The public key server is a third party that token receivers trust. The public keys of token creators are published to this server. When the token receiver receives a token it will look at the `kid` claim of the token, retrieve the key for that issuer from the public key server and use it to validate the token.
-It is possible to provide a mirrored base url for the public key server. The urls must be seperated by a pipe with a whitespace " | ". The authenticator will try to fetch a key from both urls and use the first one to be delivered. If one of the servers is not available, it will wait until at least one of them returns a valid key or all of them fail.
+It is possible to provide a mirrored base url for the public key server. The urls must be separated by a pipe with a whitespace " | ". The authenticator will try to fetch a key from both urls and use the first one to be delivered. If one of the servers is not available, it will wait until at least one of them returns a valid key or all of them fail.
 
 For example if the following token is sent:
 `{"alg": "HS256", "typ": "JWT", "kid": "name-of-client/key-id.pem"}.{"iss": "name-of-client", "sub": "name-of-client"}.[signature]`
@@ -144,5 +144,5 @@ This library automatically generates the changelog from the commit messages. To 
 
 ### Releasing
 
-* Buildkite will release the new version automatically after merging to the master;
+* Buildkite will release the new version automatically after merging to the master.
 * Use step "Publish branch to GitHub registry" to release off a dev branch.
