@@ -144,5 +144,5 @@ This library automatically generates the changelog from the commit messages. To 
 
 ### Releasing
 
-* Buildkite will release the new version automatically after merging to the master
-* Use step "Publish branch to GitHub registry" to release off a dev branch
+* Buildkite will release the new version automatically after merging to the master;
+* Use step "Publish branch to GitHub registry" to release off a dev branch.
