@@ -1,6 +1,6 @@
 {
   "name": "@safetyculture/jwt-authentication",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "description": "Library that is used to create and verify json web tokens for service to service authentication purposes.",
   "main": "index.js",
   "scripts": {
