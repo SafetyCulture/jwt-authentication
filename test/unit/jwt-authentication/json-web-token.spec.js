@@ -30,7 +30,7 @@ describe('jwt-authentication/json-web-token', function () {
         it('should pass through the arguments to jsonWebToken.sign', function() {
             jwtPromiseWrapper.create({iss: 'issuer', sub: 'subject'}, {kid: 'a-kid', privateKey: 'private-key'});
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
-                {iss: 'issuer', sub: 'subject', jti: jasmine.any(String)},
+                {iss: 'issuer', sub: 'subject', jti: jasmine.any(String), nbf: undefined, iat: undefined},
                 'private-key',
                 {algorithm: 'RS256', expiresIn: 30, headers: {kid: 'a-kid'}});
         });
@@ -52,8 +52,14 @@ describe('jwt-authentication/json-web-token', function () {
                 {privateKey: 'private-key'}
             );
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
-                {iss: 'issuer', sub: 'subject', jti: jasmine.any(String),
-                    claim1: 'foo', claim2: 'bar'
+                {
+                  iss: 'issuer',
+                  sub: 'subject',
+                  jti: jasmine.any(String),
+                  claim1: 'foo',
+                  claim2: 'bar',
+                  nbf: undefined,
+                  iat: undefined
                 },
                 jasmine.any(String),
                 jasmine.any(Object));
