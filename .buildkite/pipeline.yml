@@ -2,6 +2,12 @@ steps:
   - block: "Publish branch to GitHub registry"
     branches: "!master"
 
+  - name: "run tests"
+    command: npm run test
+    timeout_in_minutes: 20
+    agents:
+      type: aws-buildkite-agent
+
   - name: "Publish to GitHub registry"
     command: /etc/buildkite-agent/buildkite-scripts/gh-publish.sh
     timeout_in_minutes: 20
