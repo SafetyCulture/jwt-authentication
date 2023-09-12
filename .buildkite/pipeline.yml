@@ -1,9 +1,8 @@
 steps:
-  - name: "run build/test"
-    command: npm run test
-    timeout_in_minutes: 20
+  - name: ":node: Run Tests"
+    command: "/etc/buildkite-agent/buildkite-scripts/ecs-npm-multistage-docker-build.sh -b"
     agents:
-      type: aws-buildkite-agent
+      queue: general-sandpit-us-east-1
 
   - block: "Publish branch to GitHub registry"
     branches: "!master"
