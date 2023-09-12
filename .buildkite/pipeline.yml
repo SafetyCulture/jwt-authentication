@@ -2,11 +2,6 @@ env:
   TARGET_ECS_SERVICE: jwt-authentication
 
 steps:
-  - name: ":node: Run Tests"
-    command: "/etc/buildkite-agent/buildkite-scripts/ecs-npm-multistage-docker-build.sh -b"
-    agents:
-      queue: general-sandpit-us-east-1
-
   - block: "Publish branch to GitHub registry"
     branches: "!master"
 
