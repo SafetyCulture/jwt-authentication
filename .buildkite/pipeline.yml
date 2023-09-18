@@ -1,3 +1,6 @@
+env:
+  TARGET_ECS_SERVICE: jwt-authentication
+
 steps:
   - block: "Publish branch to GitHub registry"
     branches: "!master"
