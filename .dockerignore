@@ -1,9 +1,9 @@
 *
 
 !.jshintrc
-!.Gruntfile.js
-!.index.js
-!.index.d.ts
+!Gruntfile.js
+!index.js
+!index.d.ts
 !test
 !lib
 !package.json
