@@ -116,23 +116,24 @@ Refer to the [changelog](https://bitbucket.org/atlassianlabs/jwt-authentication/
 ## Contributing
 
 ### Development Requirements
-
-* nodejs 0.10.26
-* npm 1.4.3
-* grunt-cli 0.1.13
+```sh
+nvm use # v18.20.5
+npm i -g npx
+```
 
 ### Setting up a development environment
 
 1. Clone the repository
 1. `npm install` to install the npm dependencies
-1. `grunt` to run a sanity check to ensure everything is working
+1. `npx grunt` to run a sanity check to ensure everything is working
 
 ### During development
 
-* Use `grunt watch` to run the unit tests. When the relevant files are changed the unit tests will automatically be run.
-* Use `grunt watchIntegrationTest` to run the integration tests. When the relevant files are changed the integration tests will automatically be run.
-* Use `grunt docs` to preview the generated `docs/CHANGELOG.md` and `docs/API.md` files. **Do not commit these**, they are committed during the release task.
-* Use `grunt` as a sanity check before pushing.
+* Use `npx grunt watch` to run the unit tests. When the relevant files are changed the unit tests will automatically be run.
+* Use `npx grunt watchIntegrationTest` to run the integration tests. When the relevant files are changed the integration tests will automatically be run.
+* Use `npx grunt` as a sanity check before pushing.
+
+_Note_: To update libraries, `grunt-jsdoc-to-markdown` had to be removed from `devDependency` in `package.json`. If you need to update the documentation, you will need to re-add it to `devDependency` and run `npx grunt docs`.
 
 ### Documentation
 
