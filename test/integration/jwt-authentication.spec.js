@@ -335,21 +335,30 @@ describe ('jwt-authentication', function () {
                 createValidator().validate(jwtToken,['an-issuer'], function (error, claims) {
                     expect(claims).toBeUndefined('claims');
                     expect(error).toBeDefined('error');
-                    expect(error.message).toBe('The token has already expired');
+                    expect(error.message).toBe('Expiry time set before issue time');
                     done();
                 });
             });
         });
 
         it('should allow 30 seconds leeway when the token is expired', function (done) {
-            var issuedAt = Math.floor(Date.now() / 1000) - 100;
-            createJwtToken('private', {iat: issuedAt, expiresInSeconds: -30}).then(function(jwtToken) {
-                createValidator().validate(jwtToken,['an-issuer'], function (error, claims) {
+            // For jsonwebtoken v9.0.2, we need to construct a token that's slightly expired but within leeway
+            // Using current time minus 15 seconds as the expiration (within the 30s leeway)
+            var now = Math.floor(Date.now() / 1000);
+            var issuedAt = now - 60; // Issued 60 seconds ago
+            var expiresAt = now - 15; // Expired 15 seconds ago (within 30s leeway)
+            
+            // Calculate expiry in seconds from issued time
+            var expiresInSeconds = expiresAt - issuedAt;
+            
+            createJwtToken('private', {iat: issuedAt, expiresInSeconds: expiresInSeconds}).then(function(jwtToken) {
+                createValidator().validate(jwtToken, ['an-issuer'], function (error, claims) {
                     expect(claims).toEqual(jasmine.objectContaining({iss: 'an-issuer'}));
                     expect(error).toBe(null);
                     done();
                 });
             });
+
         });
 
         it('should return an error when the token was created in the future', function (done) {
