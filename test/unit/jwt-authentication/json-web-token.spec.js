@@ -33,7 +33,7 @@ describe('jwt-authentication/json-web-token', function () {
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 {iss: 'issuer', sub: 'subject', jti: ''},
                 'private-key',
-                {algorithm: 'RS256', expiresIn: 30, keyid: 'a-kid', allowInsecureKeySizes: true});
+                {algorithm: 'RS256', expiresIn: 30, keyid: 'a-kid'});
         });
 
         it('should allow expiresInSeconds to be set', function () {
