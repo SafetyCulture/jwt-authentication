@@ -4,7 +4,7 @@ ENV HOME /usr/src/app
 
 WORKDIR $HOME
 
-COPY [".jshintrc", ".npmignore", "package.json", "index.js", "index.d.ts", "$HOME/"]
+COPY [".jshintrc", "package.json", "index.js", "index.d.ts", "Gruntfile.js", "$HOME/"]
 
 ARG GITHUB_TOKEN
 RUN printf "%s\n" "@safetyculture:registry=https://npm.pkg.github.com" "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" > ".npmrc"
