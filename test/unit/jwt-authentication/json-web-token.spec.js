@@ -120,7 +120,7 @@ describe('jwt-authentication/json-web-token', function () {
             jwtPromiseWrapper.verify('jwt-token', 'public-key');
 
             expect(jsonWebToken.verify).toHaveBeenCalledWith('jwt-token', 'public-key',
-                {ignoreExpiration: true, ignoreNotBefore: true, clockTolerance: 30}, jasmine.any(Function));
+                {ignoreExpiration: true, ignoreNotBefore: true, clockTolerance: 60}, jasmine.any(Function));
         });
 
         it('should return the claims when the token verification is successful', function (done) {
