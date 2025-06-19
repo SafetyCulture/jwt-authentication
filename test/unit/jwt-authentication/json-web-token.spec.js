@@ -33,7 +33,7 @@ describe('jwt-authentication/json-web-token', function () {
             expect(jsonWebToken.sign).toHaveBeenCalledWith(
                 {iss: 'issuer', sub: 'subject', jti: ''},
                 'private-key',
-                {algorithm: 'RS256', expiresIn: 30, headers: {kid: 'a-kid'}});
+                {algorithm: 'RS256', expiresIn: 30, keyid: 'a-kid'});
         });
 
         it('should allow expiresInSeconds to be set', function () {
@@ -68,9 +68,7 @@ describe('jwt-authentication/json-web-token', function () {
                 jasmine.any(Object),
                 jasmine.any(String),
                 jasmine.objectContaining({
-                    headers: {
-                        kid: 'a-kid'
-                    }
+                    keyid: 'a-kid'
                 })
             );
         });
@@ -122,7 +120,7 @@ describe('jwt-authentication/json-web-token', function () {
             jwtPromiseWrapper.verify('jwt-token', 'public-key');
 
             expect(jsonWebToken.verify).toHaveBeenCalledWith('jwt-token', 'public-key',
-                {ignoreExpiration: true, ignoreNotBefore: true}, jasmine.any(Function));
+                {ignoreExpiration: true, ignoreNotBefore: true, clockTolerance: 60}, jasmine.any(Function));
         });
 
         it('should return the claims when the token verification is successful', function (done) {
