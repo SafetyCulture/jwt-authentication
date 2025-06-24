@@ -60,7 +60,7 @@
     "request": "^2.67.0"
   },
   "dependencies": {
-    "axios": "^0.15.3",
+    "axios": "^0.21.2",
     "ducktype": "^1.1.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
