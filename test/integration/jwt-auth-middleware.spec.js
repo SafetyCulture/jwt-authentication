@@ -21,10 +21,9 @@ describe ('jwt-auth-middlerware', function () {
     var requestWithAuthHeader = function(headerValue, requestUrl) {
         var url = requestUrl || 'http://localhost:8000/needs/auth';
         var options = {
-            auth: {
-                'bearer': headerValue
+            headers: {
+                'Authorization': 'Bearer ' + headerValue
             }
-
         };
         return q.nfcall(request, url, options);
     };
